@@ -1,9 +1,1 @@
 C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Client_App\FTP_Client_App\bin\Debug\FTP_Client_App.exe.config
-C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Client_App\FTP_Client_App\bin\Debug\FTP_Client_App.exe
-C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Client_App\FTP_Client_App\bin\Debug\FTP_Client_App.pdb
-C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Client_App\FTP_Client_App\obj\Debug\FTP_Client_App.csprojResolveAssemblyReference.cache
-C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Client_App\FTP_Client_App\obj\Debug\FTP_Client_App.Form1.resources
-C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Client_App\FTP_Client_App\obj\Debug\FTP_Client_App.Properties.Resources.resources
-C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Client_App\FTP_Client_App\obj\Debug\FTP_Client_App.csproj.GenerateResource.Cache
-C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Client_App\FTP_Client_App\obj\Debug\FTP_Client_App.exe
-C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Client_App\FTP_Client_App\obj\Debug\FTP_Client_App.pdb
