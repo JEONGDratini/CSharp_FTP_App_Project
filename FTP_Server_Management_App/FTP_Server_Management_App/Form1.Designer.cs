@@ -119,16 +119,16 @@
             // User_request_List
             // 
             this.User_request_List.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.User_request_List.Location = new System.Drawing.Point(364, 43);
+            this.User_request_List.Location = new System.Drawing.Point(310, 43);
             this.User_request_List.Name = "User_request_List";
             this.User_request_List.RowTemplate.Height = 23;
-            this.User_request_List.Size = new System.Drawing.Size(375, 112);
+            this.User_request_List.Size = new System.Drawing.Size(429, 112);
             this.User_request_List.TabIndex = 7;
             // 
             // User_request_list_Label
             // 
             this.User_request_list_Label.AutoSize = true;
-            this.User_request_list_Label.Location = new System.Drawing.Point(362, 28);
+            this.User_request_list_Label.Location = new System.Drawing.Point(308, 27);
             this.User_request_list_Label.Name = "User_request_list_Label";
             this.User_request_list_Label.Size = new System.Drawing.Size(109, 12);
             this.User_request_list_Label.TabIndex = 8;
@@ -136,16 +136,16 @@
             // 
             // User_request_Contents
             // 
-            this.User_request_Contents.Location = new System.Drawing.Point(364, 181);
+            this.User_request_Contents.Location = new System.Drawing.Point(310, 181);
             this.User_request_Contents.Name = "User_request_Contents";
-            this.User_request_Contents.Size = new System.Drawing.Size(375, 74);
+            this.User_request_Contents.Size = new System.Drawing.Size(429, 74);
             this.User_request_Contents.TabIndex = 9;
             this.User_request_Contents.Text = "";
             // 
             // User_request_Contents_Label
             // 
             this.User_request_Contents_Label.AutoSize = true;
-            this.User_request_Contents_Label.Location = new System.Drawing.Point(362, 166);
+            this.User_request_Contents_Label.Location = new System.Drawing.Point(308, 166);
             this.User_request_Contents_Label.Name = "User_request_Contents_Label";
             this.User_request_Contents_Label.Size = new System.Drawing.Size(97, 12);
             this.User_request_Contents_Label.TabIndex = 10;
@@ -163,16 +163,16 @@
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(364, 297);
+            this.richTextBox1.Location = new System.Drawing.Point(310, 297);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(375, 74);
+            this.richTextBox1.Size = new System.Drawing.Size(429, 74);
             this.richTextBox1.TabIndex = 12;
             this.richTextBox1.Text = "";
             // 
             // Admin_response_Contents
             // 
             this.Admin_response_Contents.AutoSize = true;
-            this.Admin_response_Contents.Location = new System.Drawing.Point(362, 282);
+            this.Admin_response_Contents.Location = new System.Drawing.Point(308, 282);
             this.Admin_response_Contents.Name = "Admin_response_Contents";
             this.Admin_response_Contents.Size = new System.Drawing.Size(137, 12);
             this.Admin_response_Contents.TabIndex = 13;
@@ -191,7 +191,7 @@
             // see_answered_request
             // 
             this.see_answered_request.AutoSize = true;
-            this.see_answered_request.Location = new System.Drawing.Point(491, 27);
+            this.see_answered_request.Location = new System.Drawing.Point(613, 26);
             this.see_answered_request.Name = "see_answered_request";
             this.see_answered_request.Size = new System.Drawing.Size(128, 16);
             this.see_answered_request.TabIndex = 15;

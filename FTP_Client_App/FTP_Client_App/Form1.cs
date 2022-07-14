@@ -37,9 +37,5 @@ namespace FTP_Client_App
             }
             DownLoad_Dir_Path.Text = folderPath;
         }
-
-
-
-
     }
 }
