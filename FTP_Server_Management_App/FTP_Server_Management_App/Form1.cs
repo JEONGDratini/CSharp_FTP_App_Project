@@ -22,8 +22,18 @@ namespace FTP_Server_Management_App
 
         private void Form_Loading(object sender, EventArgs e)
         {
+            File_List.Columns.Add("Colnum", "번호");
+            File_List.Columns.Add("ColName", "파일명");
 
-            
+            User_request_List.Columns.Add("Colnum", "번호");
+            User_request_List.Columns.Add("ColUser", "유저");
+            User_request_List.Columns.Add("ColTitle", "제목");
+            //ftp서버에 연결 시도하고 연결 상태를 갱신한다.
+            //연결이 안되면 '연결 상태 : 연결안됨', 연결이 되면 '연결 상태 : 연결됨'.
+            //연결되면 서버에 있는 DB에 user_request테이블에서 userid랑 is_answered 컬럼, title 컬럼, content컬럼의 정보를 뽑아온다.
+            //그리고 그렇게 뽑아온 정보 중 title과 userid를 각각 제목과 유저 열에 집어넣는다.
+
+
         }
 
         private void File_Upload_Button_Click(object sender, EventArgs e)
@@ -35,6 +45,27 @@ namespace FTP_Server_Management_App
         {
 
         }
+
+        //파일경로 입력란 옆에 ...버튼 누르면 파일 선택창 나오고 선택하면 해당파일의 경로가 textbox에 입력된다.
+        private void Find_FilePath_Button_Click(object sender, EventArgs e)
+        {
+            var fileContent = string.Empty;
+            var filePath = string.Empty;
+
+            openFileDialog1.InitialDirectory = "C:\\";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK) {
+                filePath = openFileDialog1.FileName;
+            }
+            textBox1.Text = filePath;
+
+        }
+
+        private void Send_Response_Contents_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
 
 
 

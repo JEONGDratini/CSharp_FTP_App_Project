@@ -30,7 +30,7 @@
         {
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.File_List = new System.Windows.Forms.DataGridView();
             this.File_list_label = new System.Windows.Forms.Label();
             this.Server_statement = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -44,7 +44,8 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.Admin_response_Contents = new System.Windows.Forms.Label();
             this.Send_Response_Contents = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.see_answered_request = new System.Windows.Forms.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)(this.File_List)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.User_request_List)).BeginInit();
             this.SuspendLayout();
             // 
@@ -59,14 +60,14 @@
             this.textBox1.Size = new System.Drawing.Size(229, 21);
             this.textBox1.TabIndex = 0;
             // 
-            // dataGridView1
+            // File_List
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 43);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(267, 293);
-            this.dataGridView1.TabIndex = 1;
+            this.File_List.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.File_List.Location = new System.Drawing.Point(12, 43);
+            this.File_List.Name = "File_List";
+            this.File_List.RowTemplate.Height = 23;
+            this.File_List.Size = new System.Drawing.Size(267, 293);
+            this.File_List.TabIndex = 1;
             // 
             // File_list_label
             // 
@@ -80,7 +81,7 @@
             // Server_statement
             // 
             this.Server_statement.AutoSize = true;
-            this.Server_statement.Location = new System.Drawing.Point(514, 9);
+            this.Server_statement.Location = new System.Drawing.Point(634, 439);
             this.Server_statement.Name = "Server_statement";
             this.Server_statement.Size = new System.Drawing.Size(105, 12);
             this.Server_statement.TabIndex = 3;
@@ -91,9 +92,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(10, 376);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 12);
+            this.label1.Size = new System.Drawing.Size(105, 12);
             this.label1.TabIndex = 4;
-            this.label1.Text = "업로드 파일 경로";
+            this.label1.Text = "업로드할 파일경로";
             // 
             // File_Delete_Button
             // 
@@ -121,7 +122,7 @@
             this.User_request_List.Location = new System.Drawing.Point(364, 43);
             this.User_request_List.Name = "User_request_List";
             this.User_request_List.RowTemplate.Height = 23;
-            this.User_request_List.Size = new System.Drawing.Size(255, 112);
+            this.User_request_List.Size = new System.Drawing.Size(375, 112);
             this.User_request_List.TabIndex = 7;
             // 
             // User_request_list_Label
@@ -137,7 +138,7 @@
             // 
             this.User_request_Contents.Location = new System.Drawing.Point(364, 181);
             this.User_request_Contents.Name = "User_request_Contents";
-            this.User_request_Contents.Size = new System.Drawing.Size(255, 74);
+            this.User_request_Contents.Size = new System.Drawing.Size(375, 74);
             this.User_request_Contents.TabIndex = 9;
             this.User_request_Contents.Text = "";
             // 
@@ -158,12 +159,13 @@
             this.Find_FilePath_Button.TabIndex = 11;
             this.Find_FilePath_Button.Text = "...";
             this.Find_FilePath_Button.UseVisualStyleBackColor = true;
+            this.Find_FilePath_Button.Click += new System.EventHandler(this.Find_FilePath_Button_Click);
             // 
             // richTextBox1
             // 
             this.richTextBox1.Location = new System.Drawing.Point(364, 297);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(255, 74);
+            this.richTextBox1.Size = new System.Drawing.Size(375, 74);
             this.richTextBox1.TabIndex = 12;
             this.richTextBox1.Text = "";
             // 
@@ -178,18 +180,30 @@
             // 
             // Send_Response_Contents
             // 
-            this.Send_Response_Contents.Location = new System.Drawing.Point(516, 376);
+            this.Send_Response_Contents.Location = new System.Drawing.Point(636, 377);
             this.Send_Response_Contents.Name = "Send_Response_Contents";
             this.Send_Response_Contents.Size = new System.Drawing.Size(103, 29);
             this.Send_Response_Contents.TabIndex = 14;
             this.Send_Response_Contents.Text = "응답 내용 전송";
             this.Send_Response_Contents.UseVisualStyleBackColor = true;
+            this.Send_Response_Contents.Click += new System.EventHandler(this.Send_Response_Contents_Click);
+            // 
+            // see_answered_request
+            // 
+            this.see_answered_request.AutoSize = true;
+            this.see_answered_request.Location = new System.Drawing.Point(491, 27);
+            this.see_answered_request.Name = "see_answered_request";
+            this.see_answered_request.Size = new System.Drawing.Size(128, 16);
+            this.see_answered_request.TabIndex = 15;
+            this.see_answered_request.Text = "답변된 요청도 보기";
+            this.see_answered_request.UseVisualStyleBackColor = true;
             // 
             // FTP_Management
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(646, 459);
+            this.ClientSize = new System.Drawing.Size(753, 459);
+            this.Controls.Add(this.see_answered_request);
             this.Controls.Add(this.Send_Response_Contents);
             this.Controls.Add(this.Admin_response_Contents);
             this.Controls.Add(this.richTextBox1);
@@ -203,12 +217,12 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Server_statement);
             this.Controls.Add(this.File_list_label);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.File_List);
             this.Controls.Add(this.textBox1);
             this.Name = "FTP_Management";
             this.Text = "FTP서버 관리앱";
             this.Load += new System.EventHandler(this.Form_Loading);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.File_List)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.User_request_List)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -219,7 +233,7 @@
 
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView File_List;
         private System.Windows.Forms.Label File_list_label;
         private System.Windows.Forms.Label Server_statement;
         private System.Windows.Forms.Label label1;
@@ -233,6 +247,7 @@
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Label Admin_response_Contents;
         private System.Windows.Forms.Button Send_Response_Contents;
+        private System.Windows.Forms.CheckBox see_answered_request;
     }
 }
 
