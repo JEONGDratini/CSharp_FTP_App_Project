@@ -1,0 +1,1 @@
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Client_App\FTP_Client_App\bin\Debug\FTP_Client_App.exe.config

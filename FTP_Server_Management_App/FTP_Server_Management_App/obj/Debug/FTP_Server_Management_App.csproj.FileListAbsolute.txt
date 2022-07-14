@@ -1,0 +1,9 @@
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Server_Management_App\FTP_Server_Management_App\bin\Debug\FTP_Server_Management_App.exe.config
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Server_Management_App\FTP_Server_Management_App\bin\Debug\FTP_Server_Management_App.exe
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Server_Management_App\FTP_Server_Management_App\bin\Debug\FTP_Server_Management_App.pdb
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Server_Management_App\FTP_Server_Management_App\obj\Debug\FTP_Server_Management_App.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Server_Management_App\FTP_Server_Management_App\obj\Debug\FTP_Server_Management_App.FTP_Management.resources
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Server_Management_App\FTP_Server_Management_App\obj\Debug\FTP_Server_Management_App.Properties.Resources.resources
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Server_Management_App\FTP_Server_Management_App\obj\Debug\FTP_Server_Management_App.csproj.GenerateResource.Cache
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Server_Management_App\FTP_Server_Management_App\obj\Debug\FTP_Server_Management_App.exe
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Server_Management_App\FTP_Server_Management_App\obj\Debug\FTP_Server_Management_App.pdb
