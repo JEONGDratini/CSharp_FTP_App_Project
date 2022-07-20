@@ -27,7 +27,7 @@ namespace FTP_Client_Demo
         }
 
         //폼이 로드되면 기존에 저장돼있던 ip, 포트를 dat에서 읽어와서 ip입력창, 포트입력창에 띄운다.
-        //서버에 연결되기 전엔 쓸 수 없는 파일 목록란과 파일업로드ui, 작업진행상황 프로세스바를 비활성화 시킨다.
+        //서버에 연결되기 전엔 쓸 수 없는 파일 목록란과 파일업로드ui, 작업진행상황 프로그레스바를 비활성화 시킨다.
         private void Form_Load(object sender, EventArgs e)
         {
             StreamReader IP_Port_Log = new StreamReader("IP_Port_Log.txt");
@@ -46,7 +46,7 @@ namespace FTP_Client_Demo
             }
 
             File_InFo_GridView.Enabled = false;
-            processBar1.Enabled = false;
+            progressBar1.Enabled = false;
             File_Upload_Button.Enabled = false;
             Find_FilePath_Button.Enabled = false;
             Upload_FilePath.Enabled = false;
@@ -111,12 +111,12 @@ namespace FTP_Client_Demo
 
                 //서버에 연결을 시도하고 성공 여부를 불린변수로 받아온다.
                 bool success = FTP.Connect_FTP_Server(IP_Address_Input.Text, Port.Text, Account_ID.Text, Password.Text);
-                if (success)//성공하면 비활성화된 파일 목록란과 파일업로드ui, 작업진행상황 프로세스바를 활성화시키고 접속정보 입력란 비활성화와 함께 접속버튼 텍스트를 변경한다.
+                if (success)//성공하면 비활성화된 파일 목록란과 파일업로드ui, 작업진행상황 프로그레스바를 활성화시키고 접속정보 입력란 비활성화와 함께 접속버튼 텍스트를 변경한다.
                 {
                     Server_statement.Text = "연결 상태 : 연결성공";
                     Connection_Button.Text = "연결해제";
                     File_InFo_GridView.Enabled = true;//비활성화 시켰던 친구들 활성화
-                    processBar1.Enabled = true;
+                    progressBar1.Enabled = true;
                     File_Upload_Button.Enabled = true;
                     Find_FilePath_Button.Enabled = true;
                     Upload_FilePath.Enabled = true;
@@ -162,7 +162,7 @@ namespace FTP_Client_Demo
                 Server_statement.Text = "연결 상태 : 연결안됨";
                 Connection_Button.Text = "연결";
                 File_InFo_GridView.Enabled = false;//비활성화 시켰던 친구들 활성화
-                processBar1.Enabled = false;
+                progressBar1.Enabled = false;
                 File_Upload_Button.Enabled = false;
                 Find_FilePath_Button.Enabled = false;
                 Upload_FilePath.Enabled = false;
