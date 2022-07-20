@@ -1,0 +1,6 @@
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\Microsoft_doc_tutorial_experience\Microsoft_doc_tutorial_experience\bin\Debug\Microsoft_doc_tutorial_experience.exe.config
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\Microsoft_doc_tutorial_experience\Microsoft_doc_tutorial_experience\bin\Debug\Microsoft_doc_tutorial_experience.exe
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\Microsoft_doc_tutorial_experience\Microsoft_doc_tutorial_experience\bin\Debug\Microsoft_doc_tutorial_experience.pdb
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\Microsoft_doc_tutorial_experience\Microsoft_doc_tutorial_experience\obj\Debug\Microsoft_doc_tutorial_experience.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\Microsoft_doc_tutorial_experience\Microsoft_doc_tutorial_experience\obj\Debug\Microsoft_doc_tutorial_experience.exe
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\Microsoft_doc_tutorial_experience\Microsoft_doc_tutorial_experience\obj\Debug\Microsoft_doc_tutorial_experience.pdb
