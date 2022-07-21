@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Diagnostics;
+using System.IO;
 
 namespace FTP_Client_Demo
 {
@@ -35,7 +36,7 @@ namespace FTP_Client_Demo
             this.user_ID = id;
             this.user_PW = password;
 
-            string URL_Addr = "FTP://{this.IP}:{this.port}/";
+            string URL_Addr = string.Format("FTP://{0}:{1}/", this.IP, this.port);
             try
             {
                 //FTP 클라 생성
@@ -43,21 +44,38 @@ namespace FTP_Client_Demo
                 request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);
 
                 request.KeepAlive = false;
-                request.Method = WebRequestMethods.Ftp.ListDirectory;//폴더내용 받아오기
+                //폴더내용 받아오기로 메소드 설정.
+                request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
 
                 request.UsePassive = false;
-                using (request.GetResponse())
-                {
-                }
+
+                //응답을 받아온다.
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+                //받은 응답에서 스트림을 가져와 읽는다.
+                StreamReader reader = new StreamReader(response.GetResponseStream());
+                string[] data = reader.ReadToEnd().Split('\n');
+
+
                 this.Is_Connected = true;
             }
             catch (Exception ex) {
                 this.LastException = ex;
+                //멤버 특정 정보 가져오기
+                System.Reflection.MemberInfo info = System.Reflection.MethodInfo.GetCurrentMethod();
+                string info_id = string.Format("{0}.{1}", info.ReflectedType.Name, info.Name);
 
-
-
+                if (this.ExceptionEvent != null)
+                {
+                    this.ExceptionEvent(id, ex);
+                }
+                return false;
             }
             return true;
+        }
+
+        private List<string[]> get_File_List() { 
+            string url = 
         }
 
 

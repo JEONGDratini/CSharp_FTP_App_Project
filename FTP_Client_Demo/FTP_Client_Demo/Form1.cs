@@ -37,10 +37,14 @@ namespace FTP_Client_Demo
                     case 0:
                         IP_Address_Input.Text = IP_Port_Log.ReadLine();
                         Account_ID.Text = ID_PW_Log.ReadLine();
+                        if (IP_Address_Input.Text.Length > 0)//이미 가져올 정보가 있다면
+                            Remember_Addr.Checked = true;//주소기억하기를 체크상태로 바꾼다.
                         break;
                     case 1:
                         Port.Text = IP_Port_Log.ReadLine();
                         Password.Text = ID_PW_Log.ReadLine();
+                        if (Port.Text.Length > 0)
+                            Remember_Addr.Checked = true;
                         break;
                 }
             }
@@ -177,11 +181,10 @@ namespace FTP_Client_Demo
 
         //폴더 위치 찾아서 폴더 경로 텍스트박스에 집어넣는다.
         private void Get_Dir_Path_Click(object sender, EventArgs e)
-        {            
+        {
             if (FTP_Client_folderBrowser.ShowDialog() == DialogResult.OK)
-            {
                Download_Dir_Path.Text = FTP_Client_folderBrowser.SelectedPath;
-            }
+            
         }
 
         //그..DataGridBox의 각 원소의 그 다운로드 버튼을 클릭하면 해당 버튼의 열에 맞는 파일을 다운로드 한다.파일을 업로드 한다. 프로세스바에 현재 진행상황을 띄운다.
