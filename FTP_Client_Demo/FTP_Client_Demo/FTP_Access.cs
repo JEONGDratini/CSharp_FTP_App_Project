@@ -62,6 +62,7 @@ namespace FTP_Client_Demo
             catch (Exception ex) {
                 this.LastException = ex;
                 //멤버 특정 정보 가져오기
+
                 System.Reflection.MemberInfo info = System.Reflection.MethodInfo.GetCurrentMethod();
                 string info_id = string.Format("{0}.{1}", info.ReflectedType.Name, info.Name);
 
@@ -74,8 +75,34 @@ namespace FTP_Client_Demo
             return true;
         }
 
-        private List<string[]> get_File_List() { 
-            string url = 
+        //지정한 경로에 해당하는 파일정보 리스트들을 불러오는 함수
+        public List<string[]> get_File_List(string PATH) {
+            string URL = string.Format("FTP://{0}:{1}/{2}", this.IP, this.port, PATH);
+
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(URL);
+            request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);
+            request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
+
+            //응답을 받아온다.
+            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+            //받은 응답에서 스트림을 가져와 읽는다.
+            StreamReader reader = new StreamReader(response.GetResponseStream());
+            string[] raw_fileInfo = reader.ReadToEnd().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            List<string[]> file_list = new List<string[]>();//반환할 파일정보 리스트.
+
+            foreach (string file in raw_fileInfo)
+            {
+                //fileDetailes = {날짜, 용량(폴더라면 <DIR>), 파일이름}
+                string date = file.Substring(0, 17);
+                string Capacity = file.Substring(17, 21).Trim();
+                string name = file.Substring(39);
+                string[] fileDetailes = { date, Capacity, name };
+                file_list.Add(fileDetailes);
+            }
+
+            return file_list;
         }
 
 
