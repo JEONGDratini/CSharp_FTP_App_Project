@@ -38,6 +38,8 @@
             this.Password = new System.Windows.Forms.TextBox();
             this.Connection_Button = new System.Windows.Forms.Button();
             this.File_InFo_GridView = new System.Windows.Forms.DataGridView();
+            this.File_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Capacity = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Download_Dir_Path = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.Get_Dir_Path = new System.Windows.Forms.Button();
@@ -53,9 +55,6 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label6 = new System.Windows.Forms.Label();
             this.Current_Path = new System.Windows.Forms.Label();
-            this.File_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Capacity = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Download_Button = new System.Windows.Forms.DataGridViewButtonColumn();
             ((System.ComponentModel.ISupportInitialize)(this.File_InFo_GridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -135,11 +134,11 @@
             // 
             // File_InFo_GridView
             // 
+            this.File_InFo_GridView.AllowUserToAddRows = false;
             this.File_InFo_GridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.File_InFo_GridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.File_name,
-            this.Capacity,
-            this.Download_Button});
+            this.Capacity});
             this.File_InFo_GridView.Location = new System.Drawing.Point(235, 31);
             this.File_InFo_GridView.Name = "File_InFo_GridView";
             this.File_InFo_GridView.RowTemplate.Height = 23;
@@ -147,6 +146,18 @@
             this.File_InFo_GridView.TabIndex = 9;
             this.File_InFo_GridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.File_InFo_GridView_CellClick);
             this.File_InFo_GridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.File_InFo_GridView_CellContentClick);
+            // 
+            // File_name
+            // 
+            this.File_name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.File_name.HeaderText = "파일, 폴더이름";
+            this.File_name.Name = "File_name";
+            // 
+            // Capacity
+            // 
+            this.Capacity.HeaderText = "용량";
+            this.Capacity.Name = "Capacity";
+            this.Capacity.Width = 80;
             // 
             // Download_Dir_Path
             // 
@@ -268,25 +279,6 @@
             this.Current_Path.TabIndex = 22;
             this.Current_Path.Text = "현재경로 : 확인되지않음";
             // 
-            // File_name
-            // 
-            this.File_name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.File_name.HeaderText = "파일, 폴더이름";
-            this.File_name.Name = "File_name";
-            // 
-            // Capacity
-            // 
-            this.Capacity.HeaderText = "용량";
-            this.Capacity.Name = "Capacity";
-            this.Capacity.Width = 80;
-            // 
-            // Download_Button
-            // 
-            this.Download_Button.HeaderText = "다운로드/폴더열기";
-            this.Download_Button.Name = "Download_Button";
-            this.Download_Button.Text = "";
-            this.Download_Button.Width = 70;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -350,10 +342,9 @@
         private System.Windows.Forms.CheckBox Remember_ID_PW;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label Current_Path;
         private System.Windows.Forms.DataGridViewTextBoxColumn File_name;
         private System.Windows.Forms.DataGridViewTextBoxColumn Capacity;
-        private System.Windows.Forms.DataGridViewButtonColumn Download_Button;
-        private System.Windows.Forms.Label Current_Path;
     }
 }
 

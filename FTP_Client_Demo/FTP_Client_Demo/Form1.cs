@@ -16,9 +16,12 @@ namespace FTP_Client_Demo
 {
     public partial class Form1 : Form
     {
-        private FTP_Access FTP = null;
-        private Thread th;
-        //각 ip주소, 포트번호와 id, pw를 저장할 txt파일 경로
+        private FTP_Access FTP = null;//따로만든 FTP접속 클래스 객체 받아올 변수
+        private int BtnColumnIndex;//버튼 컬럼 인덱스
+        private Thread th;//파일 다운로드, 업로드를 하면서 다른 작업할 수 있도록 스레드 선언
+
+        DataGridViewButtonColumn btn = new DataGridViewButtonColumn();
+                    
 
         public Form1()
         {
@@ -32,6 +35,12 @@ namespace FTP_Client_Demo
         {
             StreamReader IP_Port_Log = new StreamReader("IP_Port_Log.txt");
             StreamReader ID_PW_Log = new StreamReader("ID_PW_Log.txt");
+
+            BtnColumnIndex = File_InFo_GridView.Columns.Add(btn);//데이터 그리드 뷰에 버튼 열을 추가한다.
+            btn.HeaderText = "다운로드/폴더열기";
+            btn.Name = "DownLoad_Open_Btn";
+            btn.Width = 70;
+
 
             IP_Address_Input.Text = IP_Port_Log.ReadLine();
             Port.Text = IP_Port_Log.ReadLine();
@@ -48,6 +57,9 @@ namespace FTP_Client_Demo
             File_Upload_Button.Enabled = false;
             Find_FilePath_Button.Enabled = false;
             Upload_FilePath.Enabled = false;
+
+            IP_Port_Log.Close();
+            ID_PW_Log.Close();
         }
 
         //파일주소 찾아서 업로드 파일경로에 집어넣는다.
@@ -102,7 +114,7 @@ namespace FTP_Client_Demo
                 DirectoryInfo dir_info = new DirectoryInfo(Download_Dir_Path.Text);
                 if (!dir_info.Exists) 
                 {
-                    MessageBox.Show("폴더 경로를 제대로 입력해주세요.");
+                    MessageBox.Show("유효하지 않은 폴더 경로입니다.");
                     Download_Dir_Path.Focus();
                     return;
                 }
@@ -150,15 +162,20 @@ namespace FTP_Client_Demo
                     //현재경로 수정하기
                     Current_Path.Text = "현재경로 : /";
 
-                    //파일 리스트 받아와서
+                    //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
                     List<string[]> File_InFo_List = FTP.get_File_List("");
-                    DataTable File_list_table = new DataTable();
-                    File_list_table.Columns.Add("파일이름", typeof(string));
-                    File_list_table.Columns.Add("용량", typeof(string));
 
+                    //각 파일 정보마다 연산한다.
                     foreach(string[] File_InFo in File_InFo_List){
-                        File_list_table.Rows.Add(File_InFo[1], File_InFo[2]);
+                        if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
+                            File_InFo_GridView.Rows.Add(File_InFo[2], "폴더");
+                        else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
+                            File_InFo_GridView.Rows.Add(File_InFo[2], Convert_Byte_To_String(File_InFo[1]));   
                     }
+
+                    //생성된 각 행마다 버튼 추가하기
+                    foreach (DataGridViewRow row in File_InFo_GridView.Rows)
+                        row.Cells[BtnColumnIndex].Value = "실행";
 
                 }
                 else//실패시
@@ -195,10 +212,45 @@ namespace FTP_Client_Demo
         }
 
         //그..DataGridBox의 각 원소의 그 다운로드 버튼을 클릭하면 해당 버튼의 열에 맞는 파일을 다운로드 한다.파일을 업로드 한다. 프로세스바에 현재 진행상황을 띄운다.
-        //근데 특정 셀 하나를 클릭하는게 CellContentClick이 맞나? 함 구글신의 힘을 빌어야할 것 같다.
         private void File_InFo_GridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.ColumnIndex == BtnColumnIndex)//클릭된 셀의 인덱스가 버튼 컬럼인덱스와 같으면 실행한다.
+            {
+                //클릭된 행에서 파일이름 가져오기, 용량에서 폴더인지 아닌지 여부 가져오기
+                string FileName = File_InFo_GridView.Rows[e.RowIndex].Cells["File_Name"].Value.ToString();
+                bool Is_Directory = File_InFo_GridView.Rows[e.RowIndex].Cells["Capacity"].Value.ToString().Equals("폴더");
+                
+                //폴더라면 해당 폴더 내부 파일정보들 뽑아와서 데이터그리드 뷰에 띄운다.
+                if (Is_Directory)
+                {
+                    File_InFo_GridView.Rows.Clear();
+                    //현재경로 수정하기
+                    Current_Path.Text = string.Format("현재경로 : /{0}/", FileName);
 
+                    //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
+                    List<string[]> File_InFo_List = FTP.get_File_List(FileName);
+
+                    //각 파일 정보마다 연산한다.
+                    foreach (string[] File_InFo in File_InFo_List)
+                    {
+                        if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
+                            File_InFo_GridView.Rows.Add(File_InFo[2], "폴더");
+                        else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
+                            File_InFo_GridView.Rows.Add(File_InFo[2], Convert_Byte_To_String(File_InFo[1]));
+                    }
+
+                    //생성된 각 행마다 버튼 추가하기
+                    foreach (DataGridViewRow row in File_InFo_GridView.Rows)
+                        row.Cells[BtnColumnIndex].Value = "실행";
+                }
+                else//파일이면 다운로드하고 다운로드 완료되면 파일탐색기로 다운로드된 파일폴더 열어서 보여준다.
+                {
+                    
+                }
+                
+                //MessageBox.Show(string.Format("FileName : {0}, {1}", FileName, Is_Directory ? 1:0)); 
+            }
+            
         }
 
         //파일을 업로드 한다. 프로세스바에 현재 진행상황을 띄운다.
@@ -212,7 +264,21 @@ namespace FTP_Client_Demo
 
         }
 
+        //숫자용량을 적당한 단위로 표기하도록 변환해주는 메소드
+        public string Convert_Byte_To_String(string Capacity) {
+            string output;
+            long real_capacity = long.Parse(Capacity);
 
+            if (real_capacity < 1024) 
+                output = string.Format("{0}byte", real_capacity);
+            else if (real_capacity < 1024*1024) {
+                output = string.Format("{0}kb", real_capacity / 1024);}
+            else if (real_capacity < 1024 * 1024 * 1024)
+                output = string.Format("{0}mb", real_capacity / 1024 * 1024);
+            else
+                output = string.Format("{0}gb", real_capacity / 1024 * 1024 * 1024);
+            return output;
+        }
 
     }
 }
