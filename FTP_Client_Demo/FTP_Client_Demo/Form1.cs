@@ -18,11 +18,20 @@ namespace FTP_Client_Demo
     {
         private FTP_Access FTP = null;//따로만든 FTP접속 클래스 객체 받아올 변수
         private int BtnColumnIndex;//버튼 컬럼 인덱스
-        private Thread th;//파일 다운로드, 업로드를 하면서 다른 작업할 수 있도록 스레드 선언
+
+        private Thread th_Load;//파일 다운로드, 업로드를 하면서 다른 작업할 수 있도록 스레드 사용
+        private bool Is_Working = false;//현재 다운로드, 업로드, 등의 작업을 하고 있는지 여부
+
+        private Thread th_progress;//프로그레스 바 제어하기 위한 스레드
+        private delegate void SetProgressBarSafeDelegate();
+
+        private int Full_size = 0;//프로그레스바 제어용 변수들
+        private int DownloadSize = 0;
+
+        private Stack<string> Directory_History;
 
         DataGridViewButtonColumn btn = new DataGridViewButtonColumn();
                     
-
         public Form1()
         {
             InitializeComponent();
@@ -57,6 +66,7 @@ namespace FTP_Client_Demo
             File_Upload_Button.Enabled = false;
             Find_FilePath_Button.Enabled = false;
             Upload_FilePath.Enabled = false;
+            Back_Dir.Enabled = false;
 
             IP_Port_Log.Close();
             ID_PW_Log.Close();
@@ -130,6 +140,7 @@ namespace FTP_Client_Demo
                     File_Upload_Button.Enabled = true;
                     Find_FilePath_Button.Enabled = true;
                     Upload_FilePath.Enabled = true;
+                    Back_Dir.Enabled = true;
 
                     IP_Address_Input.Enabled = false;//활성화 돼있던 친구들 비활성화
                     Port.Enabled = false;
@@ -160,10 +171,12 @@ namespace FTP_Client_Demo
                         File.Delete("ID_PW_Log.txt");
 
                     //현재경로 수정하기
-                    Current_Path.Text = "현재경로 : /";
+                    Current_Path.Text = "/";
+
+                    Directory_History = new Stack<string>();//폴더기록도 가져오기.
 
                     //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
-                    List<string[]> File_InFo_List = FTP.get_File_List("");
+                    List<string[]> File_InFo_List = FTP.get_File_List(Current_Path.Text);
 
                     //각 파일 정보마다 연산한다.
                     foreach(string[] File_InFo in File_InFo_List){
@@ -225,10 +238,13 @@ namespace FTP_Client_Demo
                 {
                     File_InFo_GridView.Rows.Clear();
                     //현재경로 수정하기
-                    Current_Path.Text = string.Format("현재경로 : /{0}/", FileName);
+                    Current_Path.Text = string.Format("{0}{1}/",Current_Path.Text, FileName);
+
+                    //지금까지 온 폴더들 스택에 FileName추가하기
+                    Directory_History.Push(FileName);
 
                     //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
-                    List<string[]> File_InFo_List = FTP.get_File_List(FileName);
+                    List<string[]> File_InFo_List = FTP.get_File_List(Current_Path.Text);
 
                     //각 파일 정보마다 연산한다.
                     foreach (string[] File_InFo in File_InFo_List)
@@ -243,9 +259,33 @@ namespace FTP_Client_Demo
                     foreach (DataGridViewRow row in File_InFo_GridView.Rows)
                         row.Cells[BtnColumnIndex].Value = "실행";
                 }
-                else//파일이면 다운로드하고 다운로드 완료되면 파일탐색기로 다운로드된 파일폴더 열어서 보여준다.
+                else//파일이면 메시지박스로 다운로드 할건지 물어보고 다운로드 시작. 다운로드 완료되면 파일탐색기로 다운로드된 파일폴더 열어서 보여준다.
                 {
-                    
+                    string MsgBx_Content = string.Format(FileName + "파일을 다운로드 하시겠습니까?");
+                    DialogResult dr = MessageBox.Show(MsgBx_Content, "다운로드 확인", MessageBoxButtons.YesNo);
+                    if (dr == DialogResult.Yes)
+                    {
+                        if (Full_size > 0)
+                            MessageBox.Show("이미 다운로더가 작동 중입니다.", "경고");
+                        else
+                        {
+                            File_InFo_GridView.Enabled = false;//다운로드 하는 동안 중복으로 버튼이 눌릴 수 없게끔 비활성화한다.
+                            
+                            th_progress = new Thread(new ThreadStart(update_progressbar));
+                            th_progress.Start();
+
+                            bool success = FTP.File_DownLoad(Download_Dir_Path.Text, Current_Path.Text, FileName, ref Full_size, ref DownloadSize);
+                            if (success)
+                            {
+                                MessageBox.Show("다운로드를 완료했습니다.");
+                                System.Diagnostics.Process.Start(Download_Dir_Path.Text);
+                            }
+                            else
+                                MessageBox.Show("다운로드를 실패했습니다.");
+                            th_progress.Abort();
+                            File_InFo_GridView.Enabled = true;
+                        }
+                    }
                 }
                 
                 //MessageBox.Show(string.Format("FileName : {0}, {1}", FileName, Is_Directory ? 1:0)); 
@@ -259,13 +299,41 @@ namespace FTP_Client_Demo
 
         }
 
-        private void File_InFo_GridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        //폴더 뒤로가기 해주는 메소드
+        private void Back_Dir_Click(object sender, EventArgs e)
         {
+            if (Directory_History.Count == 0)
+                MessageBox.Show("더이상 이동할 폴더가 없습니다.");
+            else
+            {
+                File_InFo_GridView.Rows.Clear();
 
+                //dir 경로 기록에서 가장 최근에 추가한 폴더명을 빼온다.
+                string Current_Folder = Directory_History.Pop();
+
+                //현재경로 수정하기
+                Current_Path.Text = Current_Path.Text.Substring(0, Current_Path.Text.Length - (Current_Folder.Length+1));
+
+                //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
+                List<string[]> File_InFo_List = FTP.get_File_List(Current_Path.Text);
+
+                //각 파일 정보마다 연산한다.
+                foreach (string[] File_InFo in File_InFo_List)
+                {
+                    if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
+                        File_InFo_GridView.Rows.Add(File_InFo[2], "폴더");
+                    else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
+                        File_InFo_GridView.Rows.Add(File_InFo[2], Convert_Byte_To_String(File_InFo[1]));
+                }
+
+                //생성된 각 행마다 버튼 추가하기
+                foreach (DataGridViewRow row in File_InFo_GridView.Rows)
+                    row.Cells[BtnColumnIndex].Value = "실행";
+            }
         }
 
         //숫자용량을 적당한 단위로 표기하도록 변환해주는 메소드
-        public string Convert_Byte_To_String(string Capacity) {
+        private string Convert_Byte_To_String(string Capacity) {
             string output;
             long real_capacity = long.Parse(Capacity);
 
@@ -274,11 +342,37 @@ namespace FTP_Client_Demo
             else if (real_capacity < 1024*1024) {
                 output = string.Format("{0}kb", real_capacity / 1024);}
             else if (real_capacity < 1024 * 1024 * 1024)
-                output = string.Format("{0}mb", real_capacity / 1024 * 1024);
+                output = string.Format("{0}mb", real_capacity / (1024 * 1024));
             else
-                output = string.Format("{0}gb", real_capacity / 1024 * 1024 * 1024);
+                output = string.Format("{0}gb", real_capacity / (1024 * 1024 * 1024));
             return output;
         }
 
+
+        //쓸지 안쓸지 아직 모름. 일단 냅두는 중.
+        private void DownLoad_Execute(string FileName) {
+            bool success = FTP.File_DownLoad(Download_Dir_Path.Text, Current_Path.Text, FileName, ref Full_size, ref DownloadSize);
+        
+        }
+
+        //다운로드 도중에 실시간으로 변하는 progressBar
+        private void update_progressbar() {
+            
+        }
+        private void update_progrssbar_safe() {
+            if (progressBar1.InvokeRequired)
+            {
+                SetProgressBarSafeDelegate delegat = new SetProgressBarSafeDelegate(update_progrssbar_safe);
+                progressBar1.Invoke(delegat);
+            }
+            else {
+                progressBar1.Maximum = Full_size;
+                while (true)
+                {
+                    progressBar1.Value = DownloadSize;
+                    Thread.Sleep(100);
+                }
+            }
+        }
     }
 }
