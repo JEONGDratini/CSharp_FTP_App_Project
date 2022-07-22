@@ -38,6 +38,8 @@
             this.Password = new System.Windows.Forms.TextBox();
             this.Connection_Button = new System.Windows.Forms.Button();
             this.File_InFo_GridView = new System.Windows.Forms.DataGridView();
+            this.File_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Capacity = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Download_Dir_Path = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.Get_Dir_Path = new System.Windows.Forms.Button();
@@ -51,11 +53,10 @@
             this.Remember_Addr = new System.Windows.Forms.CheckBox();
             this.Remember_ID_PW = new System.Windows.Forms.CheckBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.label6 = new System.Windows.Forms.Label();
+            this.Working_State = new System.Windows.Forms.Label();
             this.Current_Path = new System.Windows.Forms.Label();
-            this.File_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Capacity = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Download_Button = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.Back_Dir = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.File_InFo_GridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -135,18 +136,29 @@
             // 
             // File_InFo_GridView
             // 
+            this.File_InFo_GridView.AllowUserToAddRows = false;
             this.File_InFo_GridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.File_InFo_GridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.File_name,
-            this.Capacity,
-            this.Download_Button});
+            this.Capacity});
             this.File_InFo_GridView.Location = new System.Drawing.Point(235, 31);
             this.File_InFo_GridView.Name = "File_InFo_GridView";
             this.File_InFo_GridView.RowTemplate.Height = 23;
             this.File_InFo_GridView.Size = new System.Drawing.Size(553, 204);
             this.File_InFo_GridView.TabIndex = 9;
             this.File_InFo_GridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.File_InFo_GridView_CellClick);
-            this.File_InFo_GridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.File_InFo_GridView_CellContentClick);
+            // 
+            // File_name
+            // 
+            this.File_name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.File_name.HeaderText = "파일, 폴더이름";
+            this.File_name.Name = "File_name";
+            // 
+            // Capacity
+            // 
+            this.Capacity.HeaderText = "용량";
+            this.Capacity.Name = "Capacity";
+            this.Capacity.Width = 80;
             // 
             // Download_Dir_Path
             // 
@@ -189,7 +201,7 @@
             // 
             // Find_FilePath_Button
             // 
-            this.Find_FilePath_Button.Location = new System.Drawing.Point(756, 257);
+            this.Find_FilePath_Button.Location = new System.Drawing.Point(756, 282);
             this.Find_FilePath_Button.Name = "Find_FilePath_Button";
             this.Find_FilePath_Button.Size = new System.Drawing.Size(32, 23);
             this.Find_FilePath_Button.TabIndex = 17;
@@ -199,7 +211,7 @@
             // 
             // File_Upload_Button
             // 
-            this.File_Upload_Button.Location = new System.Drawing.Point(235, 286);
+            this.File_Upload_Button.Location = new System.Drawing.Point(235, 311);
             this.File_Upload_Button.Name = "File_Upload_Button";
             this.File_Upload_Button.Size = new System.Drawing.Size(93, 23);
             this.File_Upload_Button.TabIndex = 16;
@@ -210,7 +222,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(233, 244);
+            this.label5.Location = new System.Drawing.Point(233, 269);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(375, 12);
             this.label5.TabIndex = 15;
@@ -218,7 +230,7 @@
             // 
             // Upload_FilePath
             // 
-            this.Upload_FilePath.Location = new System.Drawing.Point(235, 259);
+            this.Upload_FilePath.Location = new System.Drawing.Point(235, 284);
             this.Upload_FilePath.Name = "Upload_FilePath";
             this.Upload_FilePath.Size = new System.Drawing.Size(515, 21);
             this.Upload_FilePath.TabIndex = 14;
@@ -245,55 +257,57 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(235, 315);
+            this.progressBar1.Location = new System.Drawing.Point(235, 340);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(515, 19);
             this.progressBar1.TabIndex = 20;
             // 
-            // label6
+            // Working_State
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(233, 337);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(117, 12);
-            this.label6.TabIndex = 21;
-            this.label6.Text = "작업 상태 : 작업안함";
+            this.Working_State.AutoSize = true;
+            this.Working_State.Location = new System.Drawing.Point(233, 362);
+            this.Working_State.Name = "Working_State";
+            this.Working_State.Size = new System.Drawing.Size(117, 12);
+            this.Working_State.TabIndex = 21;
+            this.Working_State.Text = "작업 상태 : 작업안함";
             // 
             // Current_Path
             // 
             this.Current_Path.AutoSize = true;
-            this.Current_Path.Location = new System.Drawing.Point(233, 16);
+            this.Current_Path.Location = new System.Drawing.Point(300, 16);
             this.Current_Path.Name = "Current_Path";
-            this.Current_Path.Size = new System.Drawing.Size(137, 12);
+            this.Current_Path.Size = new System.Drawing.Size(77, 12);
             this.Current_Path.TabIndex = 22;
-            this.Current_Path.Text = "현재경로 : 확인되지않음";
+            this.Current_Path.Text = "확인되지않음";
             // 
-            // File_name
+            // Back_Dir
             // 
-            this.File_name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.File_name.HeaderText = "파일, 폴더이름";
-            this.File_name.Name = "File_name";
+            this.Back_Dir.Location = new System.Drawing.Point(682, 241);
+            this.Back_Dir.Name = "Back_Dir";
+            this.Back_Dir.Size = new System.Drawing.Size(106, 23);
+            this.Back_Dir.TabIndex = 23;
+            this.Back_Dir.Text = "이전 폴더로 가기";
+            this.Back_Dir.UseVisualStyleBackColor = true;
+            this.Back_Dir.Click += new System.EventHandler(this.Back_Dir_Click);
             // 
-            // Capacity
+            // label7
             // 
-            this.Capacity.HeaderText = "용량";
-            this.Capacity.Name = "Capacity";
-            this.Capacity.Width = 80;
-            // 
-            // Download_Button
-            // 
-            this.Download_Button.HeaderText = "다운로드/폴더열기";
-            this.Download_Button.Name = "Download_Button";
-            this.Download_Button.Text = "";
-            this.Download_Button.Width = 70;
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(233, 16);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(61, 12);
+            this.label7.TabIndex = 24;
+            this.label7.Text = "현재경로 :";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 380);
+            this.Controls.Add(this.Back_Dir);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.Current_Path);
-            this.Controls.Add(this.label6);
+            this.Controls.Add(this.Working_State);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.Remember_ID_PW);
             this.Controls.Add(this.Remember_Addr);
@@ -349,11 +363,12 @@
         private System.Windows.Forms.CheckBox Remember_Addr;
         private System.Windows.Forms.CheckBox Remember_ID_PW;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label Working_State;
+        private System.Windows.Forms.Label Current_Path;
         private System.Windows.Forms.DataGridViewTextBoxColumn File_name;
         private System.Windows.Forms.DataGridViewTextBoxColumn Capacity;
-        private System.Windows.Forms.DataGridViewButtonColumn Download_Button;
-        private System.Windows.Forms.Label Current_Path;
+        private System.Windows.Forms.Button Back_Dir;
+        private System.Windows.Forms.Label label7;
     }
 }
 

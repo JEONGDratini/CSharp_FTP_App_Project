@@ -77,7 +77,7 @@ namespace FTP_Client_Demo
 
         //지정한 경로에 해당하는 파일정보 리스트들을 불러오는 함수
         public List<string[]> get_File_List(string PATH) {
-            string URL = string.Format("FTP://{0}:{1}/{2}", this.IP, this.port, PATH);
+            string URL = string.Format("FTP://{0}:{1}{2}", this.IP, this.port, PATH);
 
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(URL);
             request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);
@@ -104,6 +104,67 @@ namespace FTP_Client_Demo
 
             return file_list;
         }
+
+        public bool File_DownLoad(string localFullDownLoadPath, string serverCurrentPath, string FileName, ref int FullSize, ref int DownloadSize) {
+            try {
+                string URL = string.Format("FTP://{0}:{1}{2}/{3}", this.IP, this.port, serverCurrentPath, FileName);
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(URL);
+                request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);//인증정보
+                request.KeepAlive = false;//연결 살려둘거에요?
+                request.UseBinary = true;//이진형식을 Data주고받을거에요?
+                request.UsePassive = false;//클라가 Data포트 연결 시작해야하나요?
+
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();//응답 받아옴.
+
+                string FullDownLoadFile = localFullDownLoadPath + "/" + FileName;//로컬에 파일 어디에 저장할지
+                FileStream outputStream = new FileStream(FullDownLoadFile, FileMode.Create, FileAccess.Write);//파일 작성에 쓸 스트림.
+                Stream ftpStream = response.GetResponseStream();//가져온 응답을 다룰 스트림.
+
+                int bufferSize = 2048;//버퍼사이즈 설정.
+                int readCount;//얼마나 많은 버퍼를 읽을지를 지정해주는 변수.
+                byte[] buffer = new byte[bufferSize];
+
+                //처음 1번 읽어온 뒤에 ftpStream에서 파일을 읽는데 몇개버퍼나 더 읽어와야하는지 구한다.
+                readCount = ftpStream.Read(buffer, 0, bufferSize);
+                FullSize = readCount + 1;//ref로 받아온 총 받아야할 버퍼 갯수변수에 값 집어넣기.
+                DownloadSize = 1;//ref로 받아온 현재 보낸 버퍼 갯수에 값집어넣기
+
+                while (readCount > 0) { //readCount가 0이 될때까지 반복한다.
+                    outputStream.Write(buffer, 0, readCount);//파일작성 스트림으로 지정한 경로에 readCount순서대로 내용을 작성한다.
+                    readCount = ftpStream.Read(buffer, 0, bufferSize);//1번 더 읽어오고 readCount를 갱신.
+                    DownloadSize++;//현재 보낸 버퍼 갯수 업데이트
+                }
+
+                //파일 쓰는거 다 끝나면 스트림 다 닫는다.
+                ftpStream.Close();
+                outputStream.Close();
+
+                if (buffer != null) {//버퍼에 찌꺼기가 껴있으면
+                    Array.Clear(buffer, 0, buffer.Length);//청소한다.
+                    buffer = null;
+                }
+
+                //가져온 사이즈 변수들도 초기화 해준다.
+                FullSize = 0;
+                DownloadSize = 0;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.LastException = ex;
+
+                System.Reflection.MemberInfo info = System.Reflection.MethodInfo.GetCurrentMethod();
+                string id = string.Format("{0}.{1}", info.ReflectedType.Name, info.Name);
+
+                if(this.ExceptionEvent != null)
+                {
+                    this.ExceptionEvent(id, ex);
+                }
+                return false;
+            }
+        }
+
 
 
     }
