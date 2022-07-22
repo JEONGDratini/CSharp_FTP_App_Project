@@ -357,7 +357,7 @@ namespace FTP_Client_Demo
 
         //다운로드 도중에 실시간으로 변하는 progressBar
         private void update_progressbar() {
-            
+ 
         }
         private void update_progrssbar_safe() {
             if (progressBar1.InvokeRequired)
