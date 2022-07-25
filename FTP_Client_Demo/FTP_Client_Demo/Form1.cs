@@ -23,10 +23,8 @@ namespace FTP_Client_Demo
         private bool Is_Working = false;//현재 다운로드, 업로드, 등의 작업을 하고 있는지 여부
 
         private Thread th_progress;//프로그레스 바 제어하기 위한 스레드
-        private delegate void SetProgressBarSafeDelegate();
+        private delegate void SetProgressBarSafeDelegate(int var);
 
-        private int Full_size = 0;//프로그레스바 제어용 변수들
-        private int DownloadSize = 0;
 
         private Stack<string> Directory_History;
 
@@ -224,7 +222,7 @@ namespace FTP_Client_Demo
             
         }
 
-        //그..DataGridBox의 각 원소의 그 다운로드 버튼을 클릭하면 해당 버튼의 열에 맞는 파일을 다운로드 한다.파일을 업로드 한다. 프로세스바에 현재 진행상황을 띄운다.
+        //그..DataGridBox의 각 원소의 그 다운로드 버튼을 클릭하면 해당 버튼의 열에 맞는 파일을 다운로드 한다. 프로세스바에 현재 진행상황을 띄운다.
         private void File_InFo_GridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == BtnColumnIndex)//클릭된 셀의 인덱스가 버튼 컬럼인덱스와 같으면 실행한다.
@@ -265,24 +263,28 @@ namespace FTP_Client_Demo
                     DialogResult dr = MessageBox.Show(MsgBx_Content, "다운로드 확인", MessageBoxButtons.YesNo);
                     if (dr == DialogResult.Yes)
                     {
-                        if (Full_size > 0)
+                        if (FTP.getFullSize() > 0)
                             MessageBox.Show("이미 다운로더가 작동 중입니다.", "경고");
                         else
                         {
-                            File_InFo_GridView.Enabled = false;//다운로드 하는 동안 중복으로 버튼이 눌릴 수 없게끔 비활성화한다.
-                            
+                            File_InFo_GridView.Enabled = false;
+                            Is_Working = true;
+                            Working_State.Text = "작업 상태 : 다운로드 중...";
                             th_progress = new Thread(new ThreadStart(update_progressbar));
                             th_progress.Start();
 
-                            bool success = FTP.File_DownLoad(Download_Dir_Path.Text, Current_Path.Text, FileName, ref Full_size, ref DownloadSize);
+                            bool success = FTP.File_DownLoad(Download_Dir_Path.Text, Current_Path.Text, FileName);
+
                             if (success)
                             {
-                                MessageBox.Show("다운로드를 완료했습니다.");
+                                MessageBox.Show(FileName + "파일 다운로드를 완료했습니다.");
                                 System.Diagnostics.Process.Start(Download_Dir_Path.Text);
                             }
                             else
-                                MessageBox.Show("다운로드를 실패했습니다.");
+                                MessageBox.Show(FileName + "파일 다운로드를 실패했습니다.");
                             th_progress.Abort();
+                            Working_State.Text = "작업 상태 : 작업안함.";
+                            Is_Working = false;
                             File_InFo_GridView.Enabled = true;
                         }
                     }
@@ -296,9 +298,64 @@ namespace FTP_Client_Demo
         //파일을 업로드 한다. 프로세스바에 현재 진행상황을 띄운다.
         private void File_Upload_Button_Click(object sender, EventArgs e)
         {
+            string FileName = Path.GetFileName(Upload_FilePath.Text);
+            string MsgBx_Content = string.Format(FileName + "파일을 업로드 하시겠습니까?");
+            DialogResult dr = MessageBox.Show(MsgBx_Content, "업로드 확인", MessageBoxButtons.YesNo);
+            if (dr == DialogResult.Yes)
+            {
+                Working_State.Text = "작업 상태 : 업로드 중...";
+                if (FTP.getFullSize() > 0)
+                    MessageBox.Show("이미 업로더가 작동 중입니다.", "경고");
+                else
+                {
+                    File_InFo_GridView.Enabled = false;
+                    Is_Working = true;
+                    th_progress = new Thread(new ThreadStart(update_progressbar));
+                    th_progress.Start();
+
+                    bool success = FTP.File_UpLoad(Upload_FilePath.Text, Current_Path.Text);
+
+                    if (success)
+                    {
+                        MessageBox.Show(FileName + "파일 업로드를 완료했습니다.");
+
+                        File_InFo_GridView.Rows.Clear();
+                        //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
+                        List<string[]> File_InFo_List = FTP.get_File_List(Current_Path.Text);
+
+                        //각 파일 정보마다 연산한다.
+                        foreach (string[] File_InFo in File_InFo_List)
+                        {
+                            if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
+                                File_InFo_GridView.Rows.Add(File_InFo[2], "폴더");
+                            else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
+                                File_InFo_GridView.Rows.Add(File_InFo[2], Convert_Byte_To_String(File_InFo[1]));
+                        }
+
+                        //생성된 각 행마다 버튼 추가하기
+                        foreach (DataGridViewRow row in File_InFo_GridView.Rows)
+                            row.Cells[BtnColumnIndex].Value = "실행";
+                    }
+                    else
+                        MessageBox.Show(FileName + "파일 업로드를 실패했습니다.");
+
+                    th_progress.Abort();
+                    Working_State.Text = "작업 상태 : 작업안함.";
+                    Is_Working = false;
+                    File_InFo_GridView.Enabled = true;
+
+
+                }
+            }
+
 
         }
 
+        //파일을 삭제한다.
+        private void File_Delete_Button_Click(object sender, EventArgs e) { 
+            
+        }
+        
         //폴더 뒤로가기 해주는 메소드
         private void Back_Dir_Click(object sender, EventArgs e)
         {
@@ -349,30 +406,30 @@ namespace FTP_Client_Demo
         }
 
 
-        //쓸지 안쓸지 아직 모름. 일단 냅두는 중.
-        private void DownLoad_Execute(string FileName) {
-            bool success = FTP.File_DownLoad(Download_Dir_Path.Text, Current_Path.Text, FileName, ref Full_size, ref DownloadSize);
-        
-        }
+
 
         //다운로드 도중에 실시간으로 변하는 progressBar
         private void update_progressbar() {
- 
-        }
-        private void update_progrssbar_safe() {
-            if (progressBar1.InvokeRequired)
+            Thread.Sleep(100);
+            progressBar1.Invoke(new SetProgressBarSafeDelegate(set_ProgressMaximum), new object[] { FTP.getFullSize() });
+
+            while (true)
             {
-                SetProgressBarSafeDelegate delegat = new SetProgressBarSafeDelegate(update_progrssbar_safe);
-                progressBar1.Invoke(delegat);
+            progressBar1.Invoke(new SetProgressBarSafeDelegate(update_progrssbar_safe), new object[] { FTP.getDownloadSize() });
+            Thread.Sleep(100);
             }
-            else {
-                progressBar1.Maximum = Full_size;
-                while (true)
-                {
-                    progressBar1.Value = DownloadSize;
-                    Thread.Sleep(100);
-                }
-            }
+        }
+
+        private void set_ProgressMaximum(int var)
+        {
+            progressBar1.Maximum = var;
+        }
+
+
+        private void update_progrssbar_safe(int var) {
+                
+            progressBar1.Value = var;
+    
         }
     }
 }

@@ -7,20 +7,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace Progress_Bar_Test
 {
     public partial class Form1 : Form
     {
-        private Timer timer;
+        private System.Windows.Forms.Timer timer;
         private int timerCount = 0;
+        private Thread th_Load;
 
         public Form1()
         {
             InitializeComponent();
 
             // 테스트용으로 타이머 이용
-            timer = new Timer();
+            timer = new System.Windows.Forms.Timer();
             timer.Interval = 1000;
             timer.Tick += new EventHandler(timer_Tick);
         }
@@ -43,6 +45,8 @@ namespace Progress_Bar_Test
 
             // 테스트를 위해 타이머 시작
             timer.Start();
+
+
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -58,5 +62,11 @@ namespace Progress_Bar_Test
                 progressBar3.Enabled = false;
             }
         }
+
+
+
+        
+
+
     }
 }

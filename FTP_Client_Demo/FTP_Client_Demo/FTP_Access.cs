@@ -15,14 +15,21 @@ namespace FTP_Client_Demo
         //델리게이트
         public delegate void ExceptionEventHandler(string locationID, Exception ex);
 
+        //에러처리는 해야져..ㅎ
         public event ExceptionEventHandler ExceptionEvent;
         public Exception LastException = null;
 
         public bool Is_Connected {get; set;}
+        //서버 접속에 필요한 정보들 저장하는 변수들.
         private string IP;
         private string port;
         private string user_ID;
         private string user_PW;
+
+        //다운로드, 업로드 현황 표기를 위한 변수들.
+        private int FullSize;
+        private int DownloadSize;
+        private int UploadSize;
 
         public FTP_Access() { }
 
@@ -105,7 +112,7 @@ namespace FTP_Client_Demo
             return file_list;
         }
 
-        public bool File_DownLoad(string localFullDownLoadPath, string serverCurrentPath, string FileName, ref int FullSize, ref int DownloadSize) {
+        public bool File_DownLoad(string localFullDownLoadPath, string serverCurrentPath, string FileName) {
             try {
                 string URL = string.Format("FTP://{0}:{1}{2}/{3}", this.IP, this.port, serverCurrentPath, FileName);
                 FtpWebRequest request = (FtpWebRequest)WebRequest.Create(URL);
@@ -150,7 +157,7 @@ namespace FTP_Client_Demo
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception ex)//에러처리
             {
                 this.LastException = ex;
 
@@ -165,7 +172,70 @@ namespace FTP_Client_Demo
             }
         }
 
+        public bool File_UpLoad(string localUpLoadPath, string serverCurrentPath) {
+            try
+            {
+                string Local_File_Name = Path.GetFileName(localUpLoadPath);
+                string FTP_URL = string.Format("FTP://{0}:{1}{2}/{3}", this.IP, this.port, serverCurrentPath, Local_File_Name);
 
 
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(FTP_URL);
+                request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);//인증정보
+                request.Method = WebRequestMethods.Ftp.UploadFile;//업로드 지정.
+
+                FileStream sourceFileStream = new FileStream(localUpLoadPath, FileMode.Open, FileAccess.Read);
+                Stream TargetWriteStream = request.GetRequestStream();
+
+                int bufflength = 2048;//2048 바이트씩 읽어서 보낸다.
+                byte[] buff = new byte[bufflength];//버퍼배열선언.
+
+
+                FullSize = (int)sourceFileStream.Length / bufflength;
+                UploadSize = 0;
+                while (true)
+                {
+                    int byteCount = sourceFileStream.Read(buff, 0, buff.Length);
+
+                    if (byteCount == 0)
+                        break;
+                    TargetWriteStream.Write(buff, 0, byteCount);
+                    UploadSize++;
+                }
+                TargetWriteStream.Close();
+                sourceFileStream.Close();
+
+
+                if (buff != null)
+                {//버퍼에 찌꺼기가 껴있으면
+                    Array.Clear(buff, 0, buff.Length);//청소한다.
+                    buff = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.LastException = ex;
+
+                System.Reflection.MemberInfo info = System.Reflection.MethodInfo.GetCurrentMethod();
+                string id = string.Format("{0}.{1}", info.ReflectedType.Name, info.Name);
+
+
+
+                if (this.ExceptionEvent != null)
+                {
+                    this.ExceptionEvent(id, ex);
+                }
+                return false;
+            }
+            return true;
+        }
+
+
+        public int getFullSize() {
+            return FullSize;
+        }
+
+        public int getDownloadSize() {
+            return DownloadSize;
+        }
     }
 }
