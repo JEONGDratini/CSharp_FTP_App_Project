@@ -11,7 +11,7 @@ using System.IO;
 using System.Threading;
 using System.Net;
 
-
+//메인폼
 namespace FTP_Client_Demo
 {
     public partial class Form1 : Form
@@ -289,10 +289,8 @@ namespace FTP_Client_Demo
                         }
                     }
                 }
-                
                 //MessageBox.Show(string.Format("FileName : {0}, {1}", FileName, Is_Directory ? 1:0)); 
             }
-            
         }
 
         //파일을 업로드 한다. 프로세스바에 현재 진행상황을 띄운다.
@@ -343,16 +341,21 @@ namespace FTP_Client_Demo
                     Working_State.Text = "작업 상태 : 작업안함.";
                     Is_Working = false;
                     File_InFo_GridView.Enabled = true;
-
-
                 }
             }
+        }
 
-
+        //해당경로에 새폴더를 만든다.
+        private void NewFolder_Button_Click(object sender, EventArgs e)
+        {
+            Form2 new_folder_form = new Form2(Current_Path.Text);
+            new_folder_form.DataPassEvent += new Form2.DataPassEventHandler(DataReceiveEvent);
+            new_folder_form.Show();
         }
 
         //파일을 삭제한다.
-        private void File_Delete_Button_Click(object sender, EventArgs e) { 
+        private void File_Delete_Button_Click(object sender, EventArgs e) 
+        { 
             
         }
         
@@ -405,7 +408,34 @@ namespace FTP_Client_Demo
             return output;
         }
 
+        private void DataReceiveEvent(string Data) {
+            bool success = FTP.New_Folder(Current_Path.Text, Data);
 
+            if (success)
+            {
+                MessageBox.Show(Data + "폴더 생성했습니다.");
+
+                File_InFo_GridView.Rows.Clear();
+                //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
+                List<string[]> File_InFo_List = FTP.get_File_List(Current_Path.Text);
+
+                //각 파일 정보마다 연산한다.
+                foreach (string[] File_InFo in File_InFo_List)
+                {
+                    if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
+                        File_InFo_GridView.Rows.Add(File_InFo[2], "폴더");
+                    else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
+                        File_InFo_GridView.Rows.Add(File_InFo[2], Convert_Byte_To_String(File_InFo[1]));
+                }
+
+                //생성된 각 행마다 버튼 추가하기
+                foreach (DataGridViewRow row in File_InFo_GridView.Rows)
+                    row.Cells[BtnColumnIndex].Value = "실행";
+            }
+            else
+                MessageBox.Show(Data + "폴더 생성했습니다.");
+
+        }
 
 
         //다운로드 도중에 실시간으로 변하는 progressBar
@@ -431,5 +461,7 @@ namespace FTP_Client_Demo
             progressBar1.Value = var;
     
         }
+
+
     }
 }
