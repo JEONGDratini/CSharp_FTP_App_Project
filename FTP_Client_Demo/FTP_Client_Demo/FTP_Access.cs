@@ -229,6 +229,10 @@ namespace FTP_Client_Demo
             return true;
         }
 
+        public bool New_Folder(string serverCurrentPath, string Folder_Name)
+        {
+            return true;
+        }
 
         public int getFullSize() {
             return FullSize;

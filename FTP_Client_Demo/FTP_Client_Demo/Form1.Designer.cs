@@ -57,6 +57,7 @@
             this.Current_Path = new System.Windows.Forms.Label();
             this.Back_Dir = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
+            this.NewFolder_Button = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.File_InFo_GridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -299,11 +300,22 @@
             this.label7.TabIndex = 24;
             this.label7.Text = "현재경로 :";
             // 
+            // NewFolder_Button
+            // 
+            this.NewFolder_Button.Location = new System.Drawing.Point(615, 241);
+            this.NewFolder_Button.Name = "NewFolder_Button";
+            this.NewFolder_Button.Size = new System.Drawing.Size(61, 23);
+            this.NewFolder_Button.TabIndex = 25;
+            this.NewFolder_Button.Text = "새폴더";
+            this.NewFolder_Button.UseVisualStyleBackColor = true;
+            this.NewFolder_Button.Click += new System.EventHandler(this.NewFolder_Button_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 380);
+            this.Controls.Add(this.NewFolder_Button);
             this.Controls.Add(this.Back_Dir);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.Current_Path);
@@ -369,6 +381,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Capacity;
         private System.Windows.Forms.Button Back_Dir;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button NewFolder_Button;
     }
 }
 
