@@ -213,9 +213,9 @@
             // 
             this.File_Upload_Button.Location = new System.Drawing.Point(235, 311);
             this.File_Upload_Button.Name = "File_Upload_Button";
-            this.File_Upload_Button.Size = new System.Drawing.Size(93, 23);
+            this.File_Upload_Button.Size = new System.Drawing.Size(142, 23);
             this.File_Upload_Button.TabIndex = 16;
-            this.File_Upload_Button.Text = "파일 업로드";
+            this.File_Upload_Button.Text = "현재경로에 파일 업로드";
             this.File_Upload_Button.UseVisualStyleBackColor = true;
             this.File_Upload_Button.Click += new System.EventHandler(this.File_Upload_Button_Click);
             // 
