@@ -114,7 +114,7 @@ namespace FTP_Client_Demo
 
         public bool File_DownLoad(string localFullDownLoadPath, string serverCurrentPath, string FileName) {
             try {
-                string URL = string.Format("FTP://{0}:{1}{2}/{3}", this.IP, this.port, serverCurrentPath, FileName);
+                string URL = string.Format("FTP://{0}:{1}{2}{3}", this.IP, this.port, serverCurrentPath, FileName);
                 FtpWebRequest request = (FtpWebRequest)WebRequest.Create(URL);
                 request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);//인증정보
                 request.KeepAlive = false;//연결 살려둘거에요?
@@ -176,7 +176,7 @@ namespace FTP_Client_Demo
             try
             {
                 string Local_File_Name = Path.GetFileName(localUpLoadPath);
-                string FTP_URL = string.Format("FTP://{0}:{1}{2}/{3}", this.IP, this.port, serverCurrentPath, Local_File_Name);
+                string FTP_URL = string.Format("FTP://{0}:{1}{2}{3}", this.IP, this.port, serverCurrentPath, Local_File_Name);
 
 
                 FtpWebRequest request = (FtpWebRequest)WebRequest.Create(FTP_URL);
@@ -231,6 +231,24 @@ namespace FTP_Client_Demo
 
         public bool New_Folder(string serverCurrentPath, string Folder_Name)
         {
+            try
+            {
+                string FTP_URL = string.Format("FTP://{0}:{1}{2}{3}", this.IP, this.port, serverCurrentPath, Folder_Name);
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(FTP_URL);
+                request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);//인증정보
+                request.Method = WebRequestMethods.Ftp.MakeDirectory;//폴더 만들기 지정.
+                request.KeepAlive = false;
+                request.UsePassive = false;
+
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();//bool형은 안되고 var형만 using 할 수 있는듯.
+                
+                response.Close();
+                
+
+            }
+            catch (WebException e){
+                return false;
+            }
             return true;
         }
 

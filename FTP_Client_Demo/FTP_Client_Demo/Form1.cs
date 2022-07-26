@@ -201,6 +201,7 @@ namespace FTP_Client_Demo
                 Server_statement.Text = "연결 상태 : 연결안됨";
                 Connection_Button.Text = "연결";
                 File_InFo_GridView.Enabled = false;//비활성화 시켰던 친구들 활성화
+                File_InFo_GridView.Rows.Clear();
                 progressBar1.Enabled = false;
                 File_Upload_Button.Enabled = false;
                 Find_FilePath_Button.Enabled = false;
@@ -433,7 +434,7 @@ namespace FTP_Client_Demo
                     row.Cells[BtnColumnIndex].Value = "실행";
             }
             else
-                MessageBox.Show(Data + "폴더 생성했습니다.");
+                MessageBox.Show(Data + "폴더 생성실패");
 
         }
 

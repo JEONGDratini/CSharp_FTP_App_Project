@@ -1,0 +1,10 @@
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Admin\FTP_Admin\bin\Debug\FTP_Admin.exe.config
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Admin\FTP_Admin\obj\Debug\FTP_Admin.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Admin\FTP_Admin\obj\Debug\FTP_Admin.Properties.Resources.resources
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Admin\FTP_Admin\obj\Debug\FTP_Admin.csproj.GenerateResource.Cache
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Admin\FTP_Admin\bin\Debug\FTP_Admin.exe
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Admin\FTP_Admin\bin\Debug\FTP_Admin.pdb
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Admin\FTP_Admin\obj\Debug\FTP_FTP_Admin.Form1.resources
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Admin\FTP_Admin\obj\Debug\FTP_Admin.Form2.resources
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Admin\FTP_Admin\obj\Debug\FTP_Admin.exe
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\FTP_Admin\FTP_Admin\obj\Debug\FTP_Admin.pdb
