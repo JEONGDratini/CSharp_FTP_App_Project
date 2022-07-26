@@ -252,6 +252,45 @@ namespace FTP_FTP_Admin
             return true;
         }
 
+        public bool Delete(string serverCurrentPath, string FileName, bool is_Dir)
+        {
+            try
+            {
+                string URL = string.Format("FTP://{0}:{1}{2}{3}", this.IP, this.port, serverCurrentPath, FileName);
+
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(URL);
+                request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);//인증정보
+                //지울대상이 폴더면 폴더삭제 메소드로 설정하고 Delete함수를 재귀호출해서 안에있는 것들을 싸그리 지운다.
+                if (is_Dir)
+                {
+                    URL = URL + "/";
+                    request.Method = WebRequestMethods.Ftp.RemoveDirectory;
+
+                    int substrlen = 19 + this.port.Length;
+                    List<string[]> File_List = get_File_List(URL.Substring(substrlen));
+                    if (File_List.Count > 0)
+                    {
+                        foreach (string[] File_InFo in File_List)
+                        {
+                            if (File_InFo[1].Equals("<DIR>"))
+                                Delete(URL.Substring(substrlen), File_InFo[2], true);
+
+                            else
+                                Delete(URL.Substring(substrlen), File_InFo[2], false);
+                        }
+                    }
+
+                }
+                else//지울대상이 파일이면 파일삭제 메소드로 설정한다.
+                    request.Method = WebRequestMethods.Ftp.DeleteFile;
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+            }
+            catch (Exception ex){
+                return false;
+            }
+            return true;
+        }
+
         public int getFullSize() {
             return FullSize;
         }

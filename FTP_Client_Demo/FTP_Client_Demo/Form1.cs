@@ -354,11 +354,6 @@ namespace FTP_Client_Demo
             new_folder_form.Show();
         }
 
-        //파일을 삭제한다.
-        private void File_Delete_Button_Click(object sender, EventArgs e) 
-        { 
-            
-        }
         
         //폴더 뒤로가기 해주는 메소드
         private void Back_Dir_Click(object sender, EventArgs e)
@@ -442,12 +437,14 @@ namespace FTP_Client_Demo
         //다운로드 도중에 실시간으로 변하는 progressBar
         private void update_progressbar() {
             Thread.Sleep(100);
-            progressBar1.Invoke(new SetProgressBarSafeDelegate(set_ProgressMaximum), new object[] { FTP.getFullSize() });
+            int checkFS = FTP.getFullSize();
+            progressBar1.Invoke(new SetProgressBarSafeDelegate(set_ProgressMaximum), new object[] {  });
 
             while (true)
             {
-            progressBar1.Invoke(new SetProgressBarSafeDelegate(update_progrssbar_safe), new object[] { FTP.getDownloadSize() });
-            Thread.Sleep(100);
+                int checkDS = FTP.getDownloadSize();
+                progressBar1.Invoke(new SetProgressBarSafeDelegate(update_progrssbar_safe), new object[] { checkDS });
+                Thread.Sleep(100);
             }
         }
 

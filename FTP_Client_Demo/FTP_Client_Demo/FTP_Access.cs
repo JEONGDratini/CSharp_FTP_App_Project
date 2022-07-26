@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace FTP_Client_Demo
 {
 //===================================FTP 서버에 접속하는 작업을 처리하는 클래스==============================
     class FTP_Access
     {
+        //작업수행할 스레드
+        Thread WorkingThread = null;
         //델리게이트
         public delegate void ExceptionEventHandler(string locationID, Exception ex);
 

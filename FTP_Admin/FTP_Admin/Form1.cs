@@ -18,6 +18,7 @@ namespace FTP_FTP_Admin
     {
         private FTP_Access FTP = null;//따로만든 FTP접속 클래스 객체 받아올 변수
         private int BtnColumnIndex;//버튼 컬럼 인덱스
+        private int DelBtnColumnIndex;//삭제버튼 컬럼 인덱스
 
         private Thread th_Load;//파일 다운로드, 업로드를 하면서 다른 작업할 수 있도록 스레드 사용
         private bool Is_Working = false;//현재 다운로드, 업로드, 등의 작업을 하고 있는지 여부
@@ -28,7 +29,8 @@ namespace FTP_FTP_Admin
 
         private Stack<string> Directory_History;
 
-        DataGridViewButtonColumn btn = new DataGridViewButtonColumn();
+        DataGridViewButtonColumn Down_Openbtn = new DataGridViewButtonColumn();
+        DataGridViewButtonColumn Delete_btn = new DataGridViewButtonColumn();
                     
         public Form1()
         {
@@ -43,10 +45,15 @@ namespace FTP_FTP_Admin
             StreamReader IP_Port_Log = new StreamReader("IP_Port_Log.txt");
             StreamReader ID_PW_Log = new StreamReader("ID_PW_Log.txt");
 
-            BtnColumnIndex = File_InFo_GridView.Columns.Add(btn);//데이터 그리드 뷰에 버튼 열을 추가한다.
-            btn.HeaderText = "다운로드/폴더열기";
-            btn.Name = "DownLoad_Open_Btn";
-            btn.Width = 70;
+            BtnColumnIndex = File_InFo_GridView.Columns.Add(Down_Openbtn);//데이터 그리드 뷰에 버튼 열을 추가한다.
+            Down_Openbtn.HeaderText = "다운로드/폴더열기";
+            Down_Openbtn.Name = "DownLoad_Open_Btn";
+            Down_Openbtn.Width = 70;
+
+            DelBtnColumnIndex = File_InFo_GridView.Columns.Add(Delete_btn);//데이터 그리드 뷰에 삭제버튼 열을 추가한다.
+            Delete_btn.HeaderText = "삭제";
+            Delete_btn.Name = "Del_Btn";
+            Delete_btn.Width = 40;
 
 
             IP_Address_Input.Text = IP_Port_Log.ReadLine();
@@ -173,20 +180,8 @@ namespace FTP_FTP_Admin
 
                     Directory_History = new Stack<string>();//폴더기록도 가져오기.
 
-                    //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
-                    List<string[]> File_InFo_List = FTP.get_File_List(Current_Path.Text);
+                    Update_DataGridView();
 
-                    //각 파일 정보마다 연산한다.
-                    foreach(string[] File_InFo in File_InFo_List){
-                        if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
-                            File_InFo_GridView.Rows.Add(File_InFo[2], "폴더");
-                        else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
-                            File_InFo_GridView.Rows.Add(File_InFo[2], Convert_Byte_To_String(File_InFo[1]));   
-                    }
-
-                    //생성된 각 행마다 버튼 추가하기
-                    foreach (DataGridViewRow row in File_InFo_GridView.Rows)
-                        row.Cells[BtnColumnIndex].Value = "실행";
 
                 }
                 else//실패시
@@ -242,21 +237,8 @@ namespace FTP_FTP_Admin
                     //지금까지 온 폴더들 스택에 FileName추가하기
                     Directory_History.Push(FileName);
 
-                    //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
-                    List<string[]> File_InFo_List = FTP.get_File_List(Current_Path.Text);
-
-                    //각 파일 정보마다 연산한다.
-                    foreach (string[] File_InFo in File_InFo_List)
-                    {
-                        if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
-                            File_InFo_GridView.Rows.Add(File_InFo[2], "폴더");
-                        else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
-                            File_InFo_GridView.Rows.Add(File_InFo[2], Convert_Byte_To_String(File_InFo[1]));
-                    }
-
-                    //생성된 각 행마다 버튼 추가하기
-                    foreach (DataGridViewRow row in File_InFo_GridView.Rows)
-                        row.Cells[BtnColumnIndex].Value = "실행";
+                    //DataGridview에 내용 표기하기
+                    Update_DataGridView();
                 }
                 else//파일이면 메시지박스로 다운로드 할건지 물어보고 다운로드 시작. 다운로드 완료되면 파일탐색기로 다운로드된 파일폴더 열어서 보여준다.
                 {
@@ -292,6 +274,32 @@ namespace FTP_FTP_Admin
                 }
                 //MessageBox.Show(string.Format("FileName : {0}, {1}", FileName, Is_Directory ? 1:0)); 
             }
+            else if (e.ColumnIndex == DelBtnColumnIndex) {//삭제버튼 눌렀을 때
+                //클릭된 행에서 파일이름 가져오기, 용량에서 폴더인지 아닌지 여부 가져오기
+                string FileName = File_InFo_GridView.Rows[e.RowIndex].Cells["File_Name"].Value.ToString();
+                bool Is_Directory = File_InFo_GridView.Rows[e.RowIndex].Cells["Capacity"].Value.ToString().Equals("폴더");
+
+                string MsgBx_Content;
+                if (Is_Directory)
+                    MsgBx_Content = string.Format(FileName + "폴더 안의 내용 전부를 삭제 하시겠습니까?");
+                else
+                    MsgBx_Content = string.Format(FileName + "파일을 삭제 하시겠습니까?");
+                DialogResult dr = MessageBox.Show(MsgBx_Content, "다운로드 확인", MessageBoxButtons.YesNo);
+                if (dr == DialogResult.Yes)
+                {
+                    bool success = FTP.Delete(Current_Path.Text, FileName, Is_Directory);
+                    if (success)
+                    {
+                        MessageBox.Show(FileName + "파일/폴더 삭제를 완료했습니다.");
+                        //DataGridview에 내용 표기하기
+                        Update_DataGridView();
+                    }
+                    else {
+                        MessageBox.Show(FileName + "파일/폴더를 삭제하지 못했습니다.");
+                    }
+                }
+                
+            }
         }
 
         //파일을 업로드 한다. 프로세스바에 현재 진행상황을 띄운다.
@@ -317,23 +325,7 @@ namespace FTP_FTP_Admin
                     if (success)
                     {
                         MessageBox.Show(FileName + "파일 업로드를 완료했습니다.");
-
-                        File_InFo_GridView.Rows.Clear();
-                        //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
-                        List<string[]> File_InFo_List = FTP.get_File_List(Current_Path.Text);
-
-                        //각 파일 정보마다 연산한다.
-                        foreach (string[] File_InFo in File_InFo_List)
-                        {
-                            if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
-                                File_InFo_GridView.Rows.Add(File_InFo[2], "폴더");
-                            else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
-                                File_InFo_GridView.Rows.Add(File_InFo[2], Convert_Byte_To_String(File_InFo[1]));
-                        }
-
-                        //생성된 각 행마다 버튼 추가하기
-                        foreach (DataGridViewRow row in File_InFo_GridView.Rows)
-                            row.Cells[BtnColumnIndex].Value = "실행";
+                        Update_DataGridView(); 
                     }
                     else
                         MessageBox.Show(FileName + "파일 업로드를 실패했습니다.");
@@ -367,29 +359,13 @@ namespace FTP_FTP_Admin
                 MessageBox.Show("더이상 이동할 폴더가 없습니다.");
             else
             {
-                File_InFo_GridView.Rows.Clear();
-
                 //dir 경로 기록에서 가장 최근에 추가한 폴더명을 빼온다.
                 string Current_Folder = Directory_History.Pop();
 
                 //현재경로 수정하기
                 Current_Path.Text = Current_Path.Text.Substring(0, Current_Path.Text.Length - (Current_Folder.Length+1));
 
-                //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
-                List<string[]> File_InFo_List = FTP.get_File_List(Current_Path.Text);
-
-                //각 파일 정보마다 연산한다.
-                foreach (string[] File_InFo in File_InFo_List)
-                {
-                    if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
-                        File_InFo_GridView.Rows.Add(File_InFo[2], "폴더");
-                    else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
-                        File_InFo_GridView.Rows.Add(File_InFo[2], Convert_Byte_To_String(File_InFo[1]));
-                }
-
-                //생성된 각 행마다 버튼 추가하기
-                foreach (DataGridViewRow row in File_InFo_GridView.Rows)
-                    row.Cells[BtnColumnIndex].Value = "실행";
+                Update_DataGridView();
             }
         }
 
@@ -416,26 +392,36 @@ namespace FTP_FTP_Admin
             {
                 MessageBox.Show(Data + "폴더 생성했습니다.");
 
-                File_InFo_GridView.Rows.Clear();
-                //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
-                List<string[]> File_InFo_List = FTP.get_File_List(Current_Path.Text);
-
-                //각 파일 정보마다 연산한다.
-                foreach (string[] File_InFo in File_InFo_List)
-                {
-                    if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
-                        File_InFo_GridView.Rows.Add(File_InFo[2], "폴더");
-                    else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
-                        File_InFo_GridView.Rows.Add(File_InFo[2], Convert_Byte_To_String(File_InFo[1]));
-                }
-
-                //생성된 각 행마다 버튼 추가하기
-                foreach (DataGridViewRow row in File_InFo_GridView.Rows)
-                    row.Cells[BtnColumnIndex].Value = "실행";
+                Update_DataGridView();
             }
             else
                 MessageBox.Show(Data + "폴더 생성실패");
 
+        }
+
+        //DataGridView를 갱신해주는 메소드
+        private void Update_DataGridView() {
+
+            File_InFo_GridView.Rows.Clear();
+            //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
+            List<string[]> File_InFo_List = FTP.get_File_List(Current_Path.Text);
+
+            //각 파일 정보마다 연산한다.
+            foreach (string[] File_InFo in File_InFo_List)
+            {
+                if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
+                    File_InFo_GridView.Rows.Add(File_InFo[2], "폴더");
+                else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
+                    File_InFo_GridView.Rows.Add(File_InFo[2], Convert_Byte_To_String(File_InFo[1]));
+            }
+
+            //생성된 각 행마다 버튼 추가하기
+            foreach (DataGridViewRow row in File_InFo_GridView.Rows)
+            {
+                row.Cells[BtnColumnIndex].Value = "실행";
+                row.Cells[DelBtnColumnIndex].Value = "삭제";
+            }
+        
         }
 
 
