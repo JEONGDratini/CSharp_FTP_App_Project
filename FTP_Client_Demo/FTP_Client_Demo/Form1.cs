@@ -25,8 +25,6 @@ namespace FTP_Client_Demo
         private Thread th_Load;//파일 다운로드, 업로드를 하면서 다른 작업할 수 있도록 스레드 사용
         private bool Is_Working = false;//현재 다운로드, 업로드, 등의 작업을 하고 있는지 여부
 
-        private Thread th_progress;//프로그레스 바 제어하기 위한 스레드
-        private delegate void SetProgressBarSafeDelegate(int var);
 
 
         private Stack<string> Directory_History;
@@ -63,7 +61,6 @@ namespace FTP_Client_Demo
                 Remember_ID_PW.Checked = true;//주소기억하기를 체크상태로 바꾼다.
 
             File_InFo_GridView.Enabled = false;
-            progressBar1.Enabled = false;
             File_Upload_Button.Enabled = false;
             Find_FilePath_Button.Enabled = false;
             Upload_FilePath.Enabled = false;
@@ -137,7 +134,6 @@ namespace FTP_Client_Demo
                     Server_statement.Text = "연결 상태 : 연결성공";
                     Connection_Button.Text = "연결해제";
                     File_InFo_GridView.Enabled = true;//비활성화 시켰던 친구들 활성화
-                    progressBar1.Enabled = true;
                     File_Upload_Button.Enabled = true;
                     Find_FilePath_Button.Enabled = true;
                     Upload_FilePath.Enabled = true;
@@ -205,7 +201,6 @@ namespace FTP_Client_Demo
                 Connection_Button.Text = "연결";
                 File_InFo_GridView.Enabled = false;//비활성화 시켰던 친구들 활성화
                 File_InFo_GridView.Rows.Clear();
-                progressBar1.Enabled = false;
                 File_Upload_Button.Enabled = false;
                 Find_FilePath_Button.Enabled = false;
                 Upload_FilePath.Enabled = false;
@@ -275,8 +270,6 @@ namespace FTP_Client_Demo
                             File_InFo_GridView.Enabled = false;
                             Is_Working = true;
                             Working_State.Text = "작업 상태 : 다운로드 중...";
-                            th_progress = new Thread(new ThreadStart(update_progressbar));
-                            th_progress.Start();
 
                             bool success = await FTP.File_DownLoad(Download_Dir_Path.Text, Current_Path.Text, FileName);
 
@@ -287,7 +280,7 @@ namespace FTP_Client_Demo
                             }
                             else
                                 MessageBox.Show(FileName + "파일 다운로드를 실패했습니다.");
-                            th_progress.Abort();
+
                             Working_State.Text = "작업 상태 : 작업안함.";
                             Is_Working = false;
                             File_InFo_GridView.Enabled = true;
@@ -314,8 +307,7 @@ namespace FTP_Client_Demo
                 {
                     File_InFo_GridView.Enabled = false;
                     Is_Working = true;
-                    th_progress = new Thread(new ThreadStart(update_progressbar));
-                    th_progress.Start();
+
 
                     bool success = await FTP.File_UpLoad(Upload_FilePath.Text, Current_Path.Text);
 
@@ -343,7 +335,6 @@ namespace FTP_Client_Demo
                     else
                         MessageBox.Show(FileName + "파일 업로드를 실패했습니다.");
 
-                    th_progress.Abort();
                     Working_State.Text = "작업 상태 : 작업안함.";
                     Is_Working = false;
                     File_InFo_GridView.Enabled = true;
@@ -436,33 +427,6 @@ namespace FTP_Client_Demo
             else
                 MessageBox.Show(Data + "폴더 생성실패");
 
-        }
-
-
-        //다운로드 도중에 실시간으로 변하는 progressBar
-        private async void update_progressbar() {
-            Thread.Sleep(100);
-            int checkFS = await FTP.getFullSize();
-            progressBar1.Invoke(new SetProgressBarSafeDelegate(set_ProgressMaximum), new object[] { checkFS });
-
-            while (true)
-            {
-                int checkDS = await FTP.getDownloadSize();
-                progressBar1.Invoke(new SetProgressBarSafeDelegate(update_progrssbar_safe), new object[] { checkDS });
-                Thread.Sleep(100);
-            }
-        }
-
-        private void set_ProgressMaximum(int var)
-        {
-            progressBar1.Maximum = var;
-        }
-
-
-        private void update_progrssbar_safe(int var) {
-                
-            progressBar1.Value = var;
-    
         }
 
 

@@ -52,7 +52,6 @@
             this.Upload_FilePath = new System.Windows.Forms.TextBox();
             this.Remember_Addr = new System.Windows.Forms.CheckBox();
             this.Remember_ID_PW = new System.Windows.Forms.CheckBox();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.Working_State = new System.Windows.Forms.Label();
             this.Current_Path = new System.Windows.Forms.Label();
             this.Back_Dir = new System.Windows.Forms.Button();
@@ -256,17 +255,10 @@
             this.Remember_ID_PW.Text = "ID, PW 기억하기";
             this.Remember_ID_PW.UseVisualStyleBackColor = true;
             // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(235, 340);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(595, 19);
-            this.progressBar1.TabIndex = 20;
-            // 
             // Working_State
             // 
             this.Working_State.AutoSize = true;
-            this.Working_State.Location = new System.Drawing.Point(233, 362);
+            this.Working_State.Location = new System.Drawing.Point(383, 316);
             this.Working_State.Name = "Working_State";
             this.Working_State.Size = new System.Drawing.Size(117, 12);
             this.Working_State.TabIndex = 21;
@@ -314,13 +306,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(882, 380);
+            this.ClientSize = new System.Drawing.Size(882, 346);
             this.Controls.Add(this.NewFolder_Button);
             this.Controls.Add(this.Back_Dir);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.Current_Path);
             this.Controls.Add(this.Working_State);
-            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.Remember_ID_PW);
             this.Controls.Add(this.Remember_Addr);
             this.Controls.Add(this.Find_FilePath_Button);
@@ -374,7 +365,6 @@
         private System.Windows.Forms.TextBox Upload_FilePath;
         private System.Windows.Forms.CheckBox Remember_Addr;
         private System.Windows.Forms.CheckBox Remember_ID_PW;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label Working_State;
         private System.Windows.Forms.Label Current_Path;
         private System.Windows.Forms.DataGridViewTextBoxColumn File_name;
