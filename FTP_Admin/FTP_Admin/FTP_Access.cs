@@ -136,7 +136,7 @@ namespace FTP_FTP_Admin
 
                 //처음 1번 읽어온 뒤에 ftpStream에서 파일을 읽는데 몇개버퍼나 더 읽어와야하는지 구한다.
                 readCount = ftpStream.Read(buffer, 0, bufferSize);
-                FullSize = (int)outputStream.Length / bufferSize;//ref로 받아온 총 받아야할 버퍼 갯수변수에 값 집어넣기.
+                FullSize = (int)outputStream.Length / bufferSize;
                 WorkedSize = 1;//ref로 받아온 현재 보낸 버퍼 갯수에 값집어넣기
 
                 while (readCount > 0) { //readCount가 0이 될때까지 반복한다.
