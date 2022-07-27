@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace FTP_Client_Demo
 {
 //===================================FTP 서버에 접속하는 작업을 처리하는 클래스==============================
     class FTP_Access
     {
+        //작업수행할 스레드
+        Thread WorkingThread = null;
         //델리게이트
         public delegate void ExceptionEventHandler(string locationID, Exception ex);
 
@@ -28,8 +31,7 @@ namespace FTP_Client_Demo
 
         //다운로드, 업로드 현황 표기를 위한 변수들.
         private int FullSize;
-        private int DownloadSize;
-        private int UploadSize;
+        private int WorkedSize;
 
         public FTP_Access() { }
 
@@ -112,9 +114,9 @@ namespace FTP_Client_Demo
             return file_list;
         }
 
-        public bool File_DownLoad(string localFullDownLoadPath, string serverCurrentPath, string FileName) {
+        public async Task<bool> File_DownLoad(string localFullDownLoadPath, string serverCurrentPath, string FileName) {
             try {
-                string URL = string.Format("FTP://{0}:{1}{2}/{3}", this.IP, this.port, serverCurrentPath, FileName);
+                string URL = string.Format("FTP://{0}:{1}{2}{3}", this.IP, this.port, serverCurrentPath, FileName);
                 FtpWebRequest request = (FtpWebRequest)WebRequest.Create(URL);
                 request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);//인증정보
                 request.KeepAlive = false;//연결 살려둘거에요?
@@ -133,13 +135,13 @@ namespace FTP_Client_Demo
 
                 //처음 1번 읽어온 뒤에 ftpStream에서 파일을 읽는데 몇개버퍼나 더 읽어와야하는지 구한다.
                 readCount = ftpStream.Read(buffer, 0, bufferSize);
-                FullSize = readCount + 1;//ref로 받아온 총 받아야할 버퍼 갯수변수에 값 집어넣기.
-                DownloadSize = 1;//ref로 받아온 현재 보낸 버퍼 갯수에 값집어넣기
+                FullSize = (int)outputStream.Length / bufferSize;
+                WorkedSize = 1;//ref로 받아온 현재 보낸 버퍼 갯수에 값집어넣기
 
                 while (readCount > 0) { //readCount가 0이 될때까지 반복한다.
                     outputStream.Write(buffer, 0, readCount);//파일작성 스트림으로 지정한 경로에 readCount순서대로 내용을 작성한다.
                     readCount = ftpStream.Read(buffer, 0, bufferSize);//1번 더 읽어오고 readCount를 갱신.
-                    DownloadSize++;//현재 보낸 버퍼 갯수 업데이트
+                    WorkedSize++;//현재 보낸 버퍼 갯수 업데이트
                 }
 
                 //파일 쓰는거 다 끝나면 스트림 다 닫는다.
@@ -153,7 +155,7 @@ namespace FTP_Client_Demo
 
                 //가져온 사이즈 변수들도 초기화 해준다.
                 FullSize = 0;
-                DownloadSize = 0;
+                WorkedSize = 0;
 
                 return true;
             }
@@ -172,11 +174,11 @@ namespace FTP_Client_Demo
             }
         }
 
-        public bool File_UpLoad(string localUpLoadPath, string serverCurrentPath) {
+        public async Task<bool> File_UpLoad(string localUpLoadPath, string serverCurrentPath) {
             try
             {
                 string Local_File_Name = Path.GetFileName(localUpLoadPath);
-                string FTP_URL = string.Format("FTP://{0}:{1}{2}/{3}", this.IP, this.port, serverCurrentPath, Local_File_Name);
+                string FTP_URL = string.Format("FTP://{0}:{1}{2}{3}", this.IP, this.port, serverCurrentPath, Local_File_Name);
 
 
                 FtpWebRequest request = (FtpWebRequest)WebRequest.Create(FTP_URL);
@@ -191,7 +193,7 @@ namespace FTP_Client_Demo
 
 
                 FullSize = (int)sourceFileStream.Length / bufflength;
-                UploadSize = 0;
+                WorkedSize = 0;
                 while (true)
                 {
                     int byteCount = sourceFileStream.Read(buff, 0, buff.Length);
@@ -199,7 +201,7 @@ namespace FTP_Client_Demo
                     if (byteCount == 0)
                         break;
                     TargetWriteStream.Write(buff, 0, byteCount);
-                    UploadSize++;
+                    WorkedSize++;
                 }
                 TargetWriteStream.Close();
                 sourceFileStream.Close();
@@ -231,15 +233,33 @@ namespace FTP_Client_Demo
 
         public bool New_Folder(string serverCurrentPath, string Folder_Name)
         {
+            try
+            {
+                string FTP_URL = string.Format("FTP://{0}:{1}{2}{3}", this.IP, this.port, serverCurrentPath, Folder_Name);
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(FTP_URL);
+                request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);//인증정보
+                request.Method = WebRequestMethods.Ftp.MakeDirectory;//폴더 만들기 지정.
+                request.KeepAlive = false;
+                request.UsePassive = false;
+
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();//bool형은 안되고 var형만 using 할 수 있는듯.
+                
+                response.Close();
+                
+
+            }
+            catch {
+                return false;
+            }
             return true;
         }
 
-        public int getFullSize() {
+        public async Task<int> getFullSize() {
             return FullSize;
         }
 
-        public int getDownloadSize() {
-            return DownloadSize;
+        public async Task<int> getDownloadSize() {
+            return WorkedSize;
         }
     }
 }
