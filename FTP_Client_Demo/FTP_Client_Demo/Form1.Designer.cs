@@ -58,7 +58,6 @@
             this.Back_Dir = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.NewFolder_Button = new System.Windows.Forms.Button();
-            this.BackGroundWorker = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.File_InFo_GridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -383,7 +382,6 @@
         private System.Windows.Forms.Button Back_Dir;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button NewFolder_Button;
-        private System.ComponentModel.BackgroundWorker BackGroundWorker;
     }
 }
 

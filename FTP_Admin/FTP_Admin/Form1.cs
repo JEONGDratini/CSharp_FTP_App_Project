@@ -17,11 +17,10 @@ namespace FTP_FTP_Admin
     public partial class Form1 : Form
     {
         private FTP_Access FTP = null;//따로만든 FTP접속 클래스 객체 받아올 변수
+        private FTP_Admin.AES_En_DeCryption Cryptor = new FTP_Admin.AES_En_DeCryption();
+
         private int BtnColumnIndex;//버튼 컬럼 인덱스
         private int DelBtnColumnIndex;//삭제버튼 컬럼 인덱스
-
-        private Thread th_Load;//파일 다운로드, 업로드를 하면서 다른 작업할 수 있도록 스레드 사용
-        private bool Is_Working = false;//현재 다운로드, 업로드, 등의 작업을 하고 있는지 여부
 
         private Thread th_progress;//프로그레스 바 제어하기 위한 스레드
         private delegate void SetProgressBarSafeDelegate(int var);
@@ -55,14 +54,21 @@ namespace FTP_FTP_Admin
             Delete_btn.Name = "Del_Btn";
             Delete_btn.Width = 40;
 
+            string IP_ADDR = IP_Port_Log.ReadLine();
+            string Port_Num = IP_Port_Log.ReadLine();
+            IP_Port_Log.Close();
 
-            IP_Address_Input.Text = IP_Port_Log.ReadLine();
-            Port.Text = IP_Port_Log.ReadLine();
+            string ID_str = ID_PW_Log.ReadLine();
+            string PassWord = ID_PW_Log.ReadLine();
+            ID_PW_Log.Close();
+
+            IP_Address_Input.Text = Cryptor.Decrypt(IP_ADDR);//파일에 있는 내용을 복호화해서 가져온다.
+            Port.Text = Cryptor.Decrypt(Port_Num);
             if (IP_Address_Input.Text.Length > 0)//이미 가져올 정보가 있다면
                 Remember_Addr.Checked = true;//주소기억하기를 체크상태로 바꾼다.
 
-            Account_ID.Text = ID_PW_Log.ReadLine();
-            Password.Text = ID_PW_Log.ReadLine();
+            Account_ID.Text = Cryptor.Decrypt(ID_str);
+            Password.Text = Cryptor.Decrypt(PassWord);
             if (Account_ID.Text.Length > 0)//이미 가져올 정보가 있다면
                 Remember_ID_PW.Checked = true;//주소기억하기를 체크상태로 바꾼다.
 
@@ -73,8 +79,7 @@ namespace FTP_FTP_Admin
             Upload_FilePath.Enabled = false;
             Back_Dir.Enabled = false;
 
-            IP_Port_Log.Close();
-            ID_PW_Log.Close();
+
         }
 
         //파일주소 찾아서 업로드 파일경로에 집어넣는다.
@@ -153,23 +158,23 @@ namespace FTP_FTP_Admin
                     Password.Enabled = false;
                     Download_Dir_Path.Enabled = false;
 
-                    //이 주소 기억하기가 체크돼있으면 파일에 해당 정보를 집어넣는다. 체크 안돼있으면 기존 텍스트파일은 삭제한다.
+                    //이 주소 기억하기가 체크돼있으면 파일에 해당 정보를 암호화 한 뒤 집어넣는다. 체크 안돼있으면 기존 텍스트파일은 삭제한다.
                     if (Remember_Addr.Checked)
                     {
                         StreamWriter sw = new StreamWriter("IP_Port_Log.txt");
-                        sw.WriteLine(IP_Address_Input.Text);
-                        sw.WriteLine(Port.Text);
+                        sw.WriteLine(Cryptor.Encrypt(IP_Address_Input.Text));
+                        sw.WriteLine(Cryptor.Encrypt(Port.Text));
                         sw.Close();
                     }
                     else
                         File.Delete("IP_Port_Log.txt");
 
-                    //이 로그인 정보 기억하기가 체크돼있으면 파일에 해당 정보를 집어넣는다. 체크 안돼있으면 기존 텍스트파일은 삭제한다.
+                    //이 로그인 정보 기억하기가 체크돼있으면 파일에 해당 정보를 암호화한 뒤에 집어넣는다. 체크 안돼있으면 기존 텍스트파일은 삭제한다.
                     if (Remember_Addr.Checked)
                     {
                         StreamWriter sw = new StreamWriter("ID_PW_Log.txt");
-                        sw.WriteLine(Account_ID.Text);
-                        sw.WriteLine(Password.Text);
+                        sw.WriteLine(Cryptor.Encrypt(Account_ID.Text));
+                        sw.WriteLine(Cryptor.Encrypt(Password.Text));
                         sw.Close();
                     }
                     else
@@ -201,6 +206,7 @@ namespace FTP_FTP_Admin
                 File_Upload_Button.Enabled = false;
                 Find_FilePath_Button.Enabled = false;
                 Upload_FilePath.Enabled = false;
+                NewFolder_Button.Enabled = false;
 
                 IP_Address_Input.Enabled = true;//활성화 돼있던 친구들 비활성화
                 Port.Enabled = true;
@@ -219,7 +225,7 @@ namespace FTP_FTP_Admin
         }
 
         //그..DataGridBox의 각 원소의 그 다운로드 버튼을 클릭하면 해당 버튼의 열에 맞는 파일을 다운로드 한다. 프로세스바에 현재 진행상황을 띄운다.
-        private void File_InFo_GridView_CellClick(object sender, DataGridViewCellEventArgs e)
+        private async void File_InFo_GridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == BtnColumnIndex)//클릭된 셀의 인덱스가 버튼 컬럼인덱스와 같으면 실행한다.
             {
@@ -244,21 +250,22 @@ namespace FTP_FTP_Admin
                 {
                     string MsgBx_Content = string.Format(FileName + "파일을 다운로드 하시겠습니까?");
                     DialogResult dr = MessageBox.Show(MsgBx_Content, "다운로드 확인", MessageBoxButtons.YesNo);
+                    Working_State.Text = "작업 상태 : 다운로드 중...";
                     if (dr == DialogResult.Yes)
                     {
-                        if (FTP.getFullSize() > 0)
+                        int FullSize = await FTP.getFullSize();
+                        if (FullSize>0)
                             MessageBox.Show("이미 다운로더가 작동 중입니다.", "경고");
                         else
                         {
                             File_InFo_GridView.Enabled = false;
-                            Is_Working = true;
-                            Working_State.Text = "작업 상태 : 다운로드 중...";
+    
                             th_progress = new Thread(new ThreadStart(update_progressbar));
                             th_progress.Start();
 
-                            bool success = FTP.File_DownLoad(Download_Dir_Path.Text, Current_Path.Text, FileName);
-
-                            if (success)
+                            Task<bool> success = FTP.File_DownLoad(Download_Dir_Path.Text, Current_Path.Text, FileName);
+                            bool sucs = await success;
+                            if (sucs)
                             {
                                 MessageBox.Show(FileName + "파일 다운로드를 완료했습니다.");
                                 System.Diagnostics.Process.Start(Download_Dir_Path.Text);
@@ -266,11 +273,11 @@ namespace FTP_FTP_Admin
                             else
                                 MessageBox.Show(FileName + "파일 다운로드를 실패했습니다.");
                             th_progress.Abort();
-                            Working_State.Text = "작업 상태 : 작업안함.";
-                            Is_Working = false;
+                            
                             File_InFo_GridView.Enabled = true;
                         }
                     }
+                    Working_State.Text = "작업 상태 : 작업안함.";
                 }
                 //MessageBox.Show(string.Format("FileName : {0}, {1}", FileName, Is_Directory ? 1:0)); 
             }
@@ -303,24 +310,24 @@ namespace FTP_FTP_Admin
         }
 
         //파일을 업로드 한다. 프로세스바에 현재 진행상황을 띄운다.
-        private void File_Upload_Button_Click(object sender, EventArgs e)
+        private async void File_Upload_Button_Click(object sender, EventArgs e)
         {
             string FileName = Path.GetFileName(Upload_FilePath.Text);
             string MsgBx_Content = string.Format(FileName + "파일을 업로드 하시겠습니까?");
             DialogResult dr = MessageBox.Show(MsgBx_Content, "업로드 확인", MessageBoxButtons.YesNo);
             if (dr == DialogResult.Yes)
             {
-                Working_State.Text = "작업 상태 : 업로드 중...";
-                if (FTP.getFullSize() > 0)
-                    MessageBox.Show("이미 업로더가 작동 중입니다.", "경고");
+                int FullSize = await FTP.getFullSize();
+                if (FullSize>0)
+                    MessageBox.Show("이미 프로그램이 작업 중입니다.", "경고");
                 else
                 {
                     File_InFo_GridView.Enabled = false;
-                    Is_Working = true;
+                    Working_State.Text = "작업 상태 : 업로드 중...";
                     th_progress = new Thread(new ThreadStart(update_progressbar));
                     th_progress.Start();
 
-                    bool success = FTP.File_UpLoad(Upload_FilePath.Text, Current_Path.Text);
+                    bool success = await FTP.File_UpLoad(Upload_FilePath.Text, Current_Path.Text);
 
                     if (success)
                     {
@@ -332,7 +339,6 @@ namespace FTP_FTP_Admin
 
                     th_progress.Abort();
                     Working_State.Text = "작업 상태 : 작업안함.";
-                    Is_Working = false;
                     File_InFo_GridView.Enabled = true;
                 }
             }
@@ -346,11 +352,6 @@ namespace FTP_FTP_Admin
             new_folder_form.Show();
         }
 
-        //파일을 삭제한다.
-        private void File_Delete_Button_Click(object sender, EventArgs e) 
-        { 
-            
-        }
         
         //폴더 뒤로가기 해주는 메소드
         private void Back_Dir_Click(object sender, EventArgs e)
@@ -424,16 +425,17 @@ namespace FTP_FTP_Admin
         
         }
 
-
         //다운로드 도중에 실시간으로 변하는 progressBar
-        private void update_progressbar() {
+        private async void update_progressbar() {
             Thread.Sleep(100);
-            progressBar1.Invoke(new SetProgressBarSafeDelegate(set_ProgressMaximum), new object[] { FTP.getFullSize() });
+            int FullSize = await FTP.getFullSize();
+            progressBar1.Invoke(new SetProgressBarSafeDelegate(set_ProgressMaximum), new object[] { FullSize });
 
             while (true)
             {
-            progressBar1.Invoke(new SetProgressBarSafeDelegate(update_progrssbar_safe), new object[] { FTP.getDownloadSize() });
-            Thread.Sleep(100);
+                int WorkedSize = await FTP.getWorkedSize();
+            progressBar1.Invoke(new SetProgressBarSafeDelegate(update_progrssbar_safe), new object[] { WorkedSize });
+            Thread.Sleep(50);
             }
         }
 
@@ -443,10 +445,9 @@ namespace FTP_FTP_Admin
         }
 
 
-        private void update_progrssbar_safe(int var) {
-                
+        private void update_progrssbar_safe(int var) 
+        {   
             progressBar1.Value = var;
-    
         }
 
 

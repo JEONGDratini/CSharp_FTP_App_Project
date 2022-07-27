@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace FTP_FTP_Admin
 {
@@ -14,6 +15,7 @@ namespace FTP_FTP_Admin
     {
         //델리게이트
         public delegate void ExceptionEventHandler(string locationID, Exception ex);
+        
 
         //에러처리는 해야져..ㅎ
         public event ExceptionEventHandler ExceptionEvent;
@@ -28,8 +30,7 @@ namespace FTP_FTP_Admin
 
         //다운로드, 업로드 현황 표기를 위한 변수들.
         private int FullSize;
-        private int DownloadSize;
-        private int UploadSize;
+        private int WorkedSize;
 
         public FTP_Access() { }
 
@@ -66,18 +67,18 @@ namespace FTP_FTP_Admin
 
                 this.Is_Connected = true;
             }
-            catch (Exception ex) {
+            catch (Exception ex) {//중간에 뭐가 안되면 실행.
                 this.LastException = ex;
                 //멤버 특정 정보 가져오기
 
-                System.Reflection.MemberInfo info = System.Reflection.MethodInfo.GetCurrentMethod();
+                System.Reflection.MemberInfo info = System.Reflection.MethodInfo.GetCurrentMethod();//
                 string info_id = string.Format("{0}.{1}", info.ReflectedType.Name, info.Name);
 
-                if (this.ExceptionEvent != null)
+                if (this.ExceptionEvent != null)//만들어 놓은 예외 객체가 비어있으면
                 {
-                    this.ExceptionEvent(id, ex);
+                    this.ExceptionEvent(info_id, ex);//새로만들어 집어넣는다.
                 }
-                return false;
+                return false;//false반환
             }
             return true;
         }
@@ -112,7 +113,9 @@ namespace FTP_FTP_Admin
             return file_list;
         }
 
-        public bool File_DownLoad(string localFullDownLoadPath, string serverCurrentPath, string FileName) {
+        //왜 실시간으로 progressbar에 갱신이 안되나 싶었는데 죄다 동기식으로 코딩짜버려서 그런거였음..ㅎㅎ!
+
+        public async Task<bool> File_DownLoad(string localFullDownLoadPath, string serverCurrentPath, string FileName) {
             try {
                 string URL = string.Format("FTP://{0}:{1}{2}{3}", this.IP, this.port, serverCurrentPath, FileName);
                 FtpWebRequest request = (FtpWebRequest)WebRequest.Create(URL);
@@ -133,13 +136,13 @@ namespace FTP_FTP_Admin
 
                 //처음 1번 읽어온 뒤에 ftpStream에서 파일을 읽는데 몇개버퍼나 더 읽어와야하는지 구한다.
                 readCount = ftpStream.Read(buffer, 0, bufferSize);
-                FullSize = readCount + 1;//ref로 받아온 총 받아야할 버퍼 갯수변수에 값 집어넣기.
-                DownloadSize = 1;//ref로 받아온 현재 보낸 버퍼 갯수에 값집어넣기
+                FullSize = (int)outputStream.Length / bufferSize;//ref로 받아온 총 받아야할 버퍼 갯수변수에 값 집어넣기.
+                WorkedSize = 1;//ref로 받아온 현재 보낸 버퍼 갯수에 값집어넣기
 
                 while (readCount > 0) { //readCount가 0이 될때까지 반복한다.
                     outputStream.Write(buffer, 0, readCount);//파일작성 스트림으로 지정한 경로에 readCount순서대로 내용을 작성한다.
                     readCount = ftpStream.Read(buffer, 0, bufferSize);//1번 더 읽어오고 readCount를 갱신.
-                    DownloadSize++;//현재 보낸 버퍼 갯수 업데이트
+                    WorkedSize++;//현재 보낸 버퍼 갯수 업데이트
                 }
 
                 //파일 쓰는거 다 끝나면 스트림 다 닫는다.
@@ -153,7 +156,7 @@ namespace FTP_FTP_Admin
 
                 //가져온 사이즈 변수들도 초기화 해준다.
                 FullSize = 0;
-                DownloadSize = 0;
+                WorkedSize = 0;
 
                 return true;
             }
@@ -168,11 +171,16 @@ namespace FTP_FTP_Admin
                 {
                     this.ExceptionEvent(id, ex);
                 }
+
+                FullSize = 0;
+                WorkedSize = 0;
                 return false;
             }
         }
 
-        public bool File_UpLoad(string localUpLoadPath, string serverCurrentPath) {
+
+
+        public async Task<bool> File_UpLoad(string localUpLoadPath, string serverCurrentPath) {
             try
             {
                 string Local_File_Name = Path.GetFileName(localUpLoadPath);
@@ -191,7 +199,7 @@ namespace FTP_FTP_Admin
 
 
                 FullSize = (int)sourceFileStream.Length / bufflength;
-                UploadSize = 0;
+                WorkedSize = 0;
                 while (true)
                 {
                     int byteCount = sourceFileStream.Read(buff, 0, buff.Length);
@@ -199,7 +207,7 @@ namespace FTP_FTP_Admin
                     if (byteCount == 0)
                         break;
                     TargetWriteStream.Write(buff, 0, byteCount);
-                    UploadSize++;
+                    WorkedSize++;
                 }
                 TargetWriteStream.Close();
                 sourceFileStream.Close();
@@ -210,6 +218,9 @@ namespace FTP_FTP_Admin
                     Array.Clear(buff, 0, buff.Length);//청소한다.
                     buff = null;
                 }
+
+                FullSize = 0;
+                WorkedSize = 0;
             }
             catch (Exception ex)
             {
@@ -218,14 +229,16 @@ namespace FTP_FTP_Admin
                 System.Reflection.MemberInfo info = System.Reflection.MethodInfo.GetCurrentMethod();
                 string id = string.Format("{0}.{1}", info.ReflectedType.Name, info.Name);
 
-
-
-                if (this.ExceptionEvent != null)
+                if(this.ExceptionEvent != null)
                 {
                     this.ExceptionEvent(id, ex);
                 }
+
+                FullSize = 0;
+                WorkedSize = 0;
                 return false;
             }
+
             return true;
         }
 
@@ -243,10 +256,8 @@ namespace FTP_FTP_Admin
                 FtpWebResponse response = (FtpWebResponse)request.GetResponse();//bool형은 안되고 var형만 using 할 수 있는듯.
                 
                 response.Close();
-                
-
             }
-            catch (WebException e){
+            catch {
                 return false;
             }
             return true;
@@ -279,24 +290,23 @@ namespace FTP_FTP_Admin
                                 Delete(URL.Substring(substrlen), File_InFo[2], false);
                         }
                     }
-
                 }
                 else//지울대상이 파일이면 파일삭제 메소드로 설정한다.
                     request.Method = WebRequestMethods.Ftp.DeleteFile;
                 FtpWebResponse response = (FtpWebResponse)request.GetResponse();
             }
-            catch (Exception ex){
+            catch {
                 return false;
             }
             return true;
         }
 
-        public int getFullSize() {
+        public async Task<int> getFullSize() {
             return FullSize;
         }
 
-        public int getDownloadSize() {
-            return DownloadSize;
+        public async Task<int> getWorkedSize() {
+            return WorkedSize;
         }
     }
 }

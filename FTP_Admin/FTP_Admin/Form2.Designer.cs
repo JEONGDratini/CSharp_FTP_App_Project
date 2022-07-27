@@ -79,7 +79,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.NewFolderName);
             this.Name = "Form2";
-            this.Text = "Form2";
+            this.Text = "폴더 생성";
             this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
