@@ -1,0 +1,1 @@
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\TCP_Chat_Server\TCP_Chat_Server\bin\Debug\TCP_Chat_Server.exe.config
