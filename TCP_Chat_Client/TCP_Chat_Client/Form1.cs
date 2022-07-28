@@ -9,11 +9,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
+using System.Threading;
 
 namespace TCP_Chat_Client
 {
     public partial class Form1 : Form
     {
+        private Thread th;
 
         private int BtnColumnIndex;//버튼 컬럼 인덱스
         Socket socket;//소켓객체
@@ -47,6 +50,7 @@ namespace TCP_Chat_Client
 
                     socket.Connect(EndPt);//설정해둔 소켓통신 목적지를 설정하고 연결한다.
                     MessageBox.Show("연결에 성공했습니다.", "안내");
+                    Send_Question.Enabled = true;
                 }
                 catch
                 {
@@ -59,6 +63,14 @@ namespace TCP_Chat_Client
 
         private void Send_Question_Click(object sender, EventArgs e)
         {
+            string Question_title = Question_Title.Text;
+            string Question_Contents = QuestionTextBox.Text;
+
+            byte[] buff_title = Encoding.UTF8.GetBytes(Question_title);
+            byte[] buff_Contents = Encoding.UTF8.GetBytes(Question_Contents);
+
+
+
 
         }
 

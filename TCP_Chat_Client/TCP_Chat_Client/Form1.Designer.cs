@@ -43,12 +43,14 @@
             this.IP_Address_Input = new System.Windows.Forms.TextBox();
             this.Server_statement = new System.Windows.Forms.Label();
             this.Connection_Button = new System.Windows.Forms.Button();
+            this.Question_Title = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ResponseGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // QuestionTextBox
             // 
-            this.QuestionTextBox.Location = new System.Drawing.Point(267, 37);
+            this.QuestionTextBox.Location = new System.Drawing.Point(267, 74);
             this.QuestionTextBox.Name = "QuestionTextBox";
             this.QuestionTextBox.Size = new System.Drawing.Size(240, 96);
             this.QuestionTextBox.TabIndex = 0;
@@ -57,7 +59,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(265, 22);
+            this.label1.Location = new System.Drawing.Point(265, 61);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(77, 12);
             this.label1.TabIndex = 1;
@@ -65,7 +67,7 @@
             // 
             // Send_Question
             // 
-            this.Send_Question.Location = new System.Drawing.Point(432, 139);
+            this.Send_Question.Location = new System.Drawing.Point(432, 176);
             this.Send_Question.Name = "Send_Question";
             this.Send_Question.Size = new System.Drawing.Size(75, 23);
             this.Send_Question.TabIndex = 2;
@@ -79,7 +81,7 @@
             this.ResponseGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.FileName,
             this.check});
-            this.ResponseGridView.Location = new System.Drawing.Point(12, 179);
+            this.ResponseGridView.Location = new System.Drawing.Point(12, 201);
             this.ResponseGridView.Name = "ResponseGridView";
             this.ResponseGridView.RowTemplate.Height = 23;
             this.ResponseGridView.Size = new System.Drawing.Size(334, 114);
@@ -88,7 +90,7 @@
             // 
             // AnswerTextBox
             // 
-            this.AnswerTextBox.Location = new System.Drawing.Point(354, 197);
+            this.AnswerTextBox.Location = new System.Drawing.Point(354, 219);
             this.AnswerTextBox.Name = "AnswerTextBox";
             this.AnswerTextBox.ReadOnly = true;
             this.AnswerTextBox.Size = new System.Drawing.Size(153, 96);
@@ -98,7 +100,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(352, 182);
+            this.label2.Location = new System.Drawing.Point(352, 204);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 12);
             this.label2.TabIndex = 5;
@@ -107,7 +109,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 164);
+            this.label3.Location = new System.Drawing.Point(12, 186);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(85, 12);
             this.label3.TabIndex = 6;
@@ -176,11 +178,29 @@
             this.Connection_Button.UseVisualStyleBackColor = true;
             this.Connection_Button.Click += new System.EventHandler(this.Connection_Button_Click);
             // 
+            // Question_Title
+            // 
+            this.Question_Title.Location = new System.Drawing.Point(267, 34);
+            this.Question_Title.Name = "Question_Title";
+            this.Question_Title.Size = new System.Drawing.Size(240, 21);
+            this.Question_Title.TabIndex = 16;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(265, 19);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(77, 12);
+            this.label5.TabIndex = 17;
+            this.label5.Text = "문의제목입력";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(519, 305);
+            this.ClientSize = new System.Drawing.Size(519, 327);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.Question_Title);
             this.Controls.Add(this.Server_statement);
             this.Controls.Add(this.Connection_Button);
             this.Controls.Add(this.label4);
@@ -220,6 +240,8 @@
         private System.Windows.Forms.TextBox IP_Address_Input;
         private System.Windows.Forms.Label Server_statement;
         private System.Windows.Forms.Button Connection_Button;
+        private System.Windows.Forms.TextBox Question_Title;
+        private System.Windows.Forms.Label label5;
     }
 }
 
