@@ -1,0 +1,9 @@
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\TCP_Chat_Server\TCP_Chat_Server\bin\Debug\TCP_Chat_Server.exe.config
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\TCP_Chat_Server\TCP_Chat_Server\bin\Debug\TCP_Chat_Server.exe
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\TCP_Chat_Server\TCP_Chat_Server\bin\Debug\TCP_Chat_Server.pdb
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\TCP_Chat_Server\TCP_Chat_Server\obj\Debug\TCP_Chat_Server.csprojResolveAssemblyReference.cache
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\TCP_Chat_Server\TCP_Chat_Server\obj\Debug\TCP_Chat_Server.Form1.resources
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\TCP_Chat_Server\TCP_Chat_Server\obj\Debug\TCP_Chat_Server.Properties.Resources.resources
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\TCP_Chat_Server\TCP_Chat_Server\obj\Debug\TCP_Chat_Server.csproj.GenerateResource.Cache
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\TCP_Chat_Server\TCP_Chat_Server\obj\Debug\TCP_Chat_Server.exe
+C:\Users\user\Desktop\정민용\C#\CSharp_WinApp_Project\TCP_Chat_Server\TCP_Chat_Server\obj\Debug\TCP_Chat_Server.pdb
