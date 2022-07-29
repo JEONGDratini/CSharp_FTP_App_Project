@@ -40,6 +40,7 @@
             this.Send_Response = new System.Windows.Forms.Button();
             this.ShowQuestionContents = new System.Windows.Forms.RichTextBox();
             this.SeeQuestionContent = new System.Windows.Forms.Label();
+            this.QuestionTitle = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.QuestionGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -150,15 +151,25 @@
             this.SeeQuestionContent.AutoSize = true;
             this.SeeQuestionContent.Location = new System.Drawing.Point(61, 216);
             this.SeeQuestionContent.Name = "SeeQuestionContent";
-            this.SeeQuestionContent.Size = new System.Drawing.Size(77, 12);
+            this.SeeQuestionContent.Size = new System.Drawing.Size(121, 12);
             this.SeeQuestionContent.TabIndex = 9;
-            this.SeeQuestionContent.Text = "문의내용보기";
+            this.SeeQuestionContent.Text = "문의내용보기. 제목 : ";
+            // 
+            // QuestionTitle
+            // 
+            this.QuestionTitle.AutoSize = true;
+            this.QuestionTitle.Location = new System.Drawing.Point(179, 216);
+            this.QuestionTitle.Name = "QuestionTitle";
+            this.QuestionTitle.Size = new System.Drawing.Size(59, 12);
+            this.QuestionTitle.TabIndex = 10;
+            this.QuestionTitle.Text = "FileName";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(644, 339);
+            this.Controls.Add(this.QuestionTitle);
             this.Controls.Add(this.SeeQuestionContent);
             this.Controls.Add(this.ShowQuestionContents);
             this.Controls.Add(this.Send_Response);
@@ -192,6 +203,7 @@
         private System.Windows.Forms.Label SeeQuestionContent;
         private System.Windows.Forms.DataGridViewTextBoxColumn FileName;
         private System.Windows.Forms.DataGridViewTextBoxColumn check;
+        private System.Windows.Forms.Label QuestionTitle;
     }
 }
 

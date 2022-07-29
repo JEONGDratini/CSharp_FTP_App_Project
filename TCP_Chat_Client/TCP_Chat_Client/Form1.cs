@@ -16,6 +16,9 @@ namespace TCP_Chat_Client
 {
     public partial class Form1 : Form
     {
+        private string FolderPath = ".\\Files";
+        DirectoryInfo Dirinfo;
+
         private Thread th;
 
         private int BtnColumnIndex;//버튼 컬럼 인덱스
@@ -36,6 +39,7 @@ namespace TCP_Chat_Client
             Response_Openbtn.Width = 70;
 
             Send_Question.Enabled = false;
+            UpdateResponseGridView();
         }
 
         private void Connection_Button_Click(object sender, EventArgs e)
@@ -79,6 +83,28 @@ namespace TCP_Chat_Client
 
         }
 
+        private void UpdateResponseGridView()
+        {
+            
+            ResponseGridView.Rows.Clear();
+            if (Directory.Exists(FolderPath))
+            {
 
+                foreach (var file in Dirinfo.GetFiles())
+                {
+                    string is_answered = file.Name.Substring(0, 1);//파일 이름 첫글자가 t이면 답변된거고 f이면 답변 안된거임.
+                    string Question_title = file.Name.Substring(1);
+                    if (is_answered.Equals("f"))
+                        ResponseGridView.Rows.Add(Question_title, "응답안됨");
+                    else if (is_answered.Equals("t"))
+                        ResponseGridView.Rows.Add(Question_title, "응답됨");
+                }
+                //생성된 각 행마다 버튼 추가하기
+                foreach (DataGridViewRow row in ResponseGridView.Rows)
+                {
+                    row.Cells[BtnColumnIndex].Value = "열기";
+                }
+            }
+        }
     }
 }
