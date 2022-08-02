@@ -93,7 +93,7 @@ namespace FTP_FTP_Admin
         }
 
         //연결을 시도한다. 연결이 성공하고 이 주소 기억하기 체크박스가 체크 돼있으면 dat파일에 ip주소와 포트를 작성한다.
-        private void Connection_Button_Click(object sender, EventArgs e)
+        private async void Connection_Button_Click(object sender, EventArgs e)
         {
 
             if (Connection_Button.Text.Equals("연결"))
@@ -136,7 +136,7 @@ namespace FTP_FTP_Admin
                 }
 
                 //서버에 연결을 시도하고 성공 여부를 불린변수로 받아온다.
-                bool success = FTP.Connect_FTP_Server(IP_Address_Input.Text, Port.Text, Account_ID.Text, Password.Text);
+                bool success = await FTP.Connect_FTP_Server(IP_Address_Input.Text, Port.Text, Account_ID.Text, Password.Text, Download_Dir_Path.Text);
                 if (success)//성공하면 비활성화된 파일 목록란과 파일업로드ui, 작업진행상황 프로그레스바를 활성화시키고 접속정보 입력란 비활성화와 함께 접속버튼 텍스트를 변경한다.
                 {
                     Server_statement.Text = "연결 상태 : 연결성공";
@@ -258,7 +258,7 @@ namespace FTP_FTP_Admin
     
 
 
-                            Task<bool> success = FTP.File_DownLoad(Download_Dir_Path.Text, Current_Path.Text, FileName);
+                            Task<bool> success = FTP.File_DownLoad(Current_Path.Text, FileName, false);
                             bool sucs = await success;
                             if (sucs)
                             {
@@ -289,7 +289,7 @@ namespace FTP_FTP_Admin
                 DialogResult dr = MessageBox.Show(MsgBx_Content, "다운로드 확인", MessageBoxButtons.YesNo);
                 if (dr == DialogResult.Yes)
                 {
-                    bool success = FTP.Delete(Current_Path.Text, FileName, Is_Directory);
+                    bool success = await FTP.Delete(Current_Path.Text, FileName, Is_Directory, false);
                     if (success)
                     {
                         MessageBox.Show(FileName + "파일/폴더 삭제를 완료했습니다.");
@@ -321,7 +321,7 @@ namespace FTP_FTP_Admin
                     File_InFo_GridView.Enabled = false;
                     
 
-                    bool success = await FTP.File_UpLoad(Upload_FilePath.Text, Current_Path.Text);
+                    bool success = await FTP.File_UpLoad(Upload_FilePath.Text, Current_Path.Text, false);
 
                     if (success)
                     {
