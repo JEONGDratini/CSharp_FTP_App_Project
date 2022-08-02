@@ -85,7 +85,7 @@ namespace FTP_Client_Demo
         }
 
         //연결을 시도한다. 연결이 성공하고 이 주소 기억하기 체크박스가 체크 돼있으면 dat파일에 ip주소와 포트를 작성한다.
-        private void Connection_Button_Click(object sender, EventArgs e)
+        private async void Connection_Button_Click(object sender, EventArgs e)
         {
 
             if (Connection_Button.Text.Equals("연결"))
@@ -128,7 +128,7 @@ namespace FTP_Client_Demo
                 }
 
                 //서버에 연결을 시도하고 성공 여부를 불린변수로 받아온다.
-                bool success = FTP.Connect_FTP_Server(IP_Address_Input.Text, Port.Text, Account_ID.Text, Password.Text);
+                bool success = await FTP.Connect_FTP_Server(IP_Address_Input.Text, Port.Text, Account_ID.Text, Password.Text, Download_Dir_Path.Text);
                 if (success)//성공하면 비활성화된 파일 목록란과 파일업로드ui, 작업진행상황 프로그레스바를 활성화시키고 접속정보 입력란 비활성화와 함께 접속버튼 텍스트를 변경한다.
                 {
                     Server_statement.Text = "연결 상태 : 연결성공";
@@ -271,7 +271,7 @@ namespace FTP_Client_Demo
                             Is_Working = true;
                             Working_State.Text = "작업 상태 : 다운로드 중...";
 
-                            bool success = await FTP.File_DownLoad(Download_Dir_Path.Text, Current_Path.Text, FileName);
+                            bool success = await FTP.File_DownLoad(Current_Path.Text, FileName, false);
 
                             if (success)
                             {
@@ -295,7 +295,7 @@ namespace FTP_Client_Demo
         private async void File_Upload_Button_Click(object sender, EventArgs e)
         {
             string FileName = Path.GetFileName(Upload_FilePath.Text);
-            string MsgBx_Content = string.Format(FileName + "파일을 업로드 하시겠습니까?");
+            string MsgBx_Content = string.Format(FileName + "파일을 업로드 하시겠습니까??\n1회 최대 업로드 가능 용량 : 300mb");
             DialogResult dr = MessageBox.Show(MsgBx_Content, "업로드 확인", MessageBoxButtons.YesNo);
             if (dr == DialogResult.Yes)
             {
@@ -309,7 +309,11 @@ namespace FTP_Client_Demo
                     Is_Working = true;
 
 
-                    bool success = await FTP.File_UpLoad(Upload_FilePath.Text, Current_Path.Text);
+                    //이미 파일이 있다면 해당파일을 File_Upload함수를 update모드로 실행한다.
+
+
+                    bool success = await FTP.File_UpLoad(Upload_FilePath.Text, Current_Path.Text, false);
+
 
                     if (success)
                     {

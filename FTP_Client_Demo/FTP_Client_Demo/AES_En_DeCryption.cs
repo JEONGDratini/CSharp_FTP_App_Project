@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 
 namespace FTP_Client_Demo
 {
+    //문자열을 암, 복호화 해주는 클래스
     class AES_En_DeCryption
     {
         //key값 (멜로망스 - 좋은날 가사 중 발췌)
