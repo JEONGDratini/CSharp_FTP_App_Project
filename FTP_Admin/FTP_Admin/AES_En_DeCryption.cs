@@ -30,6 +30,7 @@ namespace FTP_Admin
             int length = pwdBytes.Length;//변환한 바이트의 크기를 keybyte배열 크기와 비교한 후 변환한 바이트 크기가 더 크면 length를 갱신한다.
             if (length > keyBytes.Length)
                 length = keyBytes.Length;
+
             Array.Copy(pwdBytes, keyBytes, length);//pwdByte를 keyByte로 length만큼 복사한다.
             AES_crypt.Key = keyBytes;//key값과 IV값 설정한다.
             AES_crypt.IV = keyBytes;

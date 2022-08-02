@@ -1,0 +1,9 @@
+포트포워딩 해야하는지 여부 확인하고 해야하면 포트포워딩 할 것.
+ftp 계정 id = dratinijeong, pw = mnbv0987.
+ftp 구축하면 안에 대충 파일들 아무거나 몇개 집어넣어놓기
+
+
+
+07-07-22  11:22AM                  700 async, await 메모.txt\r\n
+07-06-22  05:52PM                 1998 class메모.txt\r\n
+07-07-22  03:20PM                 2508 Delegate와 invoke 메모.txt\r\n

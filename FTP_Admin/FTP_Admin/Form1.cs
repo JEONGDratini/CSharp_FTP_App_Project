@@ -308,17 +308,18 @@ namespace FTP_FTP_Admin
         private async void File_Upload_Button_Click(object sender, EventArgs e)
         {
             string FileName = Path.GetFileName(Upload_FilePath.Text);
-            string MsgBx_Content = string.Format(FileName + "파일을 업로드 하시겠습니까?");
+            string MsgBx_Content = string.Format(FileName + "파일을 업로드 하시겠습니까?\n1회 최대 업로드 가능 용량 : 300mb");
             DialogResult dr = MessageBox.Show(MsgBx_Content, "업로드 확인", MessageBoxButtons.YesNo);
             if (dr == DialogResult.Yes)
             {
+                Working_State.Text = "작업 상태 : 업로드 중...";
                 int FullSize = await FTP.getFullSize();
                 if (FullSize>0)
                     MessageBox.Show("이미 프로그램이 작업 중입니다.", "경고");
                 else
                 {
                     File_InFo_GridView.Enabled = false;
-                    Working_State.Text = "작업 상태 : 업로드 중...";
+                    
 
                     bool success = await FTP.File_UpLoad(Upload_FilePath.Text, Current_Path.Text);
 

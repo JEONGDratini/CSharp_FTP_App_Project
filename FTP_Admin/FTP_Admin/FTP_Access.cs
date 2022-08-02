@@ -200,14 +200,16 @@ namespace FTP_FTP_Admin
 
                 FullSize = (int)sourceFileStream.Length / bufflength;
                 WorkedSize = 0;
+                int cnt = 0;
                 while (true)
                 {
                     int byteCount = sourceFileStream.Read(buff, 0, buff.Length);
 
-                    if (byteCount == 0)
+                    if (byteCount == 0 || cnt >150000)
                         break;
                     TargetWriteStream.Write(buff, 0, byteCount);
                     WorkedSize++;
+                    cnt++;
                 }
                 TargetWriteStream.Close();
                 sourceFileStream.Close();
