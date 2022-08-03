@@ -30,9 +30,6 @@ namespace FTP_FTP_Admin
         private string user_PW;
         private string localFullDownLoadPath;
 
-        //서버에 로그를 남길 때 필요한 클라이언트 정보들을 저장하는 변수들.
-        private string externalip;
-
         //다운로드, 업로드 현황 표기를 위한 변수들.
         private int FullSize;
         private int WorkedSize;
