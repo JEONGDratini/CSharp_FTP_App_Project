@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,11 +23,14 @@ namespace FTP_FTP_Admin
         private int BtnColumnIndex;//버튼 컬럼 인덱스
         private int DelBtnColumnIndex;//삭제버튼 컬럼 인덱스
 
+        private int OpenLogBtnColumnIndex;//로그파일 열기 컬럼 인덱스
+
 
         private Stack<string> Directory_History;
 
         DataGridViewButtonColumn Down_Openbtn = new DataGridViewButtonColumn();
         DataGridViewButtonColumn Delete_btn = new DataGridViewButtonColumn();
+        DataGridViewButtonColumn Log_Openbtn = new DataGridViewButtonColumn();
                     
         public Form1()
         {
@@ -50,6 +54,11 @@ namespace FTP_FTP_Admin
             Delete_btn.HeaderText = "삭제";
             Delete_btn.Name = "Del_Btn";
             Delete_btn.Width = 40;
+
+            OpenLogBtnColumnIndex = LogFilesGridView.Columns.Add(Log_Openbtn);
+            Log_Openbtn.HeaderText = "조회";
+            Log_Openbtn.Name = "Log_OpBtn";
+            Log_Openbtn.Width = 40;
 
             string IP_ADDR = IP_Port_Log.ReadLine();
             string Port_Num = IP_Port_Log.ReadLine();
@@ -182,6 +191,7 @@ namespace FTP_FTP_Admin
                     Directory_History = new Stack<string>();//폴더기록도 가져오기.
 
                     Update_DataGridView();
+                    Update_LogGridView();
 
 
                 }
@@ -196,8 +206,13 @@ namespace FTP_FTP_Admin
                 FTP = null;//FTP객체 박살내기
                 Server_statement.Text = "연결 상태 : 연결안됨";
                 Connection_Button.Text = "연결";
+                Log_Name_Label.Text = "조회안함";
+                Current_Path.Text = "확인되지 않음";
                 File_InFo_GridView.Enabled = false;//비활성화 시켰던 친구들 활성화
                 File_InFo_GridView.Rows.Clear();
+
+                LogFilesGridView.Enabled = false;//비활성화 시켰던 친구들 활성화
+                LogFilesGridView.Rows.Clear();
 
                 File_Upload_Button.Enabled = false;
                 Find_FilePath_Button.Enabled = false;
@@ -362,6 +377,71 @@ namespace FTP_FTP_Admin
             }
         }
 
+        //로그파일 그리드뷰의 조회버튼을 누르면 실행
+        private async void LogFilesGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == OpenLogBtnColumnIndex)//클릭된 셀의 인덱스가 버튼 컬럼인덱스와 같으면 실행한다.
+            {
+                //클릭된 행에서 로그파일이름 가져오기
+                string FileName = LogFilesGridView.Rows[e.RowIndex].Cells["LogFile_Name"].Value.ToString();
+                int FullSize = await FTP.getFullSize();
+                if (FullSize > 0)
+                    MessageBox.Show("이미 다운로더가 작동 중입니다.", "경고");
+                else
+                {
+                    bool success = await FTP.File_DownLoad("/LOG_FOLDER/", FileName, true);
+
+                    if (success)//성공시 메시지 박스를 띄우고 해당 파일내용 텍스트박스에 띄우기
+                    {
+                        MessageBox.Show(FileName + "로그 열람 성공.\n(열람한 로그는 로컬폴더에 다운로드 됩니다.)");
+
+                        string Log_FilePath = Download_Dir_Path.Text + "\\" + FileName;
+                        FileStream LogFileStream = new FileStream(Log_FilePath, FileMode.Open, FileAccess.Read);
+
+                        StreamReader LogReader = new StreamReader(LogFileStream, System.Text.Encoding.UTF8);
+                        Log_Content_Box.Text = LogReader.ReadToEnd();
+                        Log_Name_Label.Text = FileName;
+
+
+                        LogReader.Close();
+                        LogFileStream.Close();
+                    }
+                    else
+                        MessageBox.Show(FileName + "로그 열람 실패");
+
+                }
+            }
+        }
+
+        //현재 열람중인 로그파일을 텍스트 편집기에서 보고싶을 때 클릭
+        private void OpenLogFileButton_Click(object sender, EventArgs e)
+        {
+            Process.Start(string.Format(Download_Dir_Path.Text +"\\"+ Log_Name_Label.Text));//txt파일 기본연결 프로그램에서 파일을 연다.
+        }
+
+        //로그파일 목록과 현재 새로고침 해주는 버튼
+        private async void ReFresh_Log_Click(object sender, EventArgs e)
+        {
+            Update_LogGridView();
+            bool success = await FTP.File_DownLoad("/LOG_FOLDER/", Log_Name_Label.Text, true);
+
+            if (success)//성공시 메시지 박스를 띄우고 해당 파일내용 텍스트박스에 띄우기
+            {
+                
+
+                string Log_FilePath = Download_Dir_Path.Text + "\\" + Log_Name_Label.Text;
+                FileStream LogFileStream = new FileStream(Log_FilePath, FileMode.Open, FileAccess.Read);
+
+                StreamReader LogReader = new StreamReader(LogFileStream, System.Text.Encoding.UTF8);
+                Log_Content_Box.Text = LogReader.ReadToEnd();
+
+                LogReader.Close();
+                LogFileStream.Close();
+            }
+            else
+                MessageBox.Show(Log_Name_Label.Text + "로그 다시 받아오기 실패");
+        }
+
         //숫자용량을 적당한 단위로 표기하도록 변환해주는 메소드
         private string Convert_Byte_To_String(string Capacity) {
             string output;
@@ -378,6 +458,7 @@ namespace FTP_FTP_Admin
             return output;
         }
 
+        //폴더 생성할 때 안내 띄우는 메소드
         private void DataReceiveEvent(string Data) {
             bool success = FTP.New_Folder(Current_Path.Text, Data);
 
@@ -402,7 +483,9 @@ namespace FTP_FTP_Admin
             //각 파일 정보마다 연산한다.
             foreach (string[] File_InFo in File_InFo_List)
             {
-                if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
+                if (File_InFo[2].Equals("LOG_FOLDER"))
+                    continue;
+                else if (File_InFo[1].Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
                     File_InFo_GridView.Rows.Add(File_InFo[2], "폴더");
                 else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
                     File_InFo_GridView.Rows.Add(File_InFo[2], Convert_Byte_To_String(File_InFo[1]));
@@ -415,6 +498,25 @@ namespace FTP_FTP_Admin
                 row.Cells[DelBtnColumnIndex].Value = "삭제";
             }
         
+        }
+
+        //로그파일 조회하는 데이터그리드 뷰 업데이트하는 함수
+        private void Update_LogGridView() {
+            LogFilesGridView.Rows.Clear();
+            List<string[]> Log_InFo_List = FTP.get_File_List("/LOG_FOLDER/");
+
+            //각 파일 정보마다 연산한다.
+            foreach (string[] File_InFo in Log_InFo_List)
+            {
+                LogFilesGridView.Rows.Add(File_InFo[2]);
+            }
+
+            //생성된 각 행마다 버튼 추가하기
+            foreach (DataGridViewRow row in LogFilesGridView.Rows)
+            {
+                row.Cells[OpenLogBtnColumnIndex].Value = "열기";
+
+            }
         }
 
     }
