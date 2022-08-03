@@ -57,7 +57,17 @@
             this.Back_Dir = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.NewFolder_Button = new System.Windows.Forms.Button();
+            this.LogFilesGridView = new System.Windows.Forms.DataGridView();
+            this.label6 = new System.Windows.Forms.Label();
+            this.Log_Content_Box = new System.Windows.Forms.RichTextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.OpenLogFileButton = new System.Windows.Forms.Button();
+            this.ReFresh_Log = new System.Windows.Forms.Button();
+            this.LogFile_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Log_Name_Label = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.File_InFo_GridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LogFilesGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // IP_Address_Input
@@ -141,7 +151,7 @@
             this.File_InFo_GridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.File_name,
             this.Capacity});
-            this.File_InFo_GridView.Location = new System.Drawing.Point(235, 31);
+            this.File_InFo_GridView.Location = new System.Drawing.Point(269, 31);
             this.File_InFo_GridView.Name = "File_InFo_GridView";
             this.File_InFo_GridView.RowTemplate.Height = 23;
             this.File_InFo_GridView.Size = new System.Drawing.Size(633, 204);
@@ -201,7 +211,7 @@
             // 
             // Find_FilePath_Button
             // 
-            this.Find_FilePath_Button.Location = new System.Drawing.Point(836, 282);
+            this.Find_FilePath_Button.Location = new System.Drawing.Point(870, 282);
             this.Find_FilePath_Button.Name = "Find_FilePath_Button";
             this.Find_FilePath_Button.Size = new System.Drawing.Size(32, 23);
             this.Find_FilePath_Button.TabIndex = 17;
@@ -211,7 +221,7 @@
             // 
             // File_Upload_Button
             // 
-            this.File_Upload_Button.Location = new System.Drawing.Point(235, 311);
+            this.File_Upload_Button.Location = new System.Drawing.Point(269, 311);
             this.File_Upload_Button.Name = "File_Upload_Button";
             this.File_Upload_Button.Size = new System.Drawing.Size(142, 23);
             this.File_Upload_Button.TabIndex = 16;
@@ -222,7 +232,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(233, 269);
+            this.label5.Location = new System.Drawing.Point(267, 269);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(375, 12);
             this.label5.TabIndex = 15;
@@ -230,7 +240,7 @@
             // 
             // Upload_FilePath
             // 
-            this.Upload_FilePath.Location = new System.Drawing.Point(235, 284);
+            this.Upload_FilePath.Location = new System.Drawing.Point(269, 284);
             this.Upload_FilePath.Name = "Upload_FilePath";
             this.Upload_FilePath.Size = new System.Drawing.Size(595, 21);
             this.Upload_FilePath.TabIndex = 14;
@@ -258,7 +268,7 @@
             // Working_State
             // 
             this.Working_State.AutoSize = true;
-            this.Working_State.Location = new System.Drawing.Point(383, 316);
+            this.Working_State.Location = new System.Drawing.Point(417, 316);
             this.Working_State.Name = "Working_State";
             this.Working_State.Size = new System.Drawing.Size(117, 12);
             this.Working_State.TabIndex = 21;
@@ -267,7 +277,7 @@
             // Current_Path
             // 
             this.Current_Path.AutoSize = true;
-            this.Current_Path.Location = new System.Drawing.Point(300, 16);
+            this.Current_Path.Location = new System.Drawing.Point(334, 16);
             this.Current_Path.Name = "Current_Path";
             this.Current_Path.Size = new System.Drawing.Size(77, 12);
             this.Current_Path.TabIndex = 22;
@@ -275,7 +285,7 @@
             // 
             // Back_Dir
             // 
-            this.Back_Dir.Location = new System.Drawing.Point(762, 241);
+            this.Back_Dir.Location = new System.Drawing.Point(796, 241);
             this.Back_Dir.Name = "Back_Dir";
             this.Back_Dir.Size = new System.Drawing.Size(106, 23);
             this.Back_Dir.TabIndex = 23;
@@ -286,7 +296,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(233, 16);
+            this.label7.Location = new System.Drawing.Point(267, 16);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(61, 12);
             this.label7.TabIndex = 24;
@@ -294,7 +304,7 @@
             // 
             // NewFolder_Button
             // 
-            this.NewFolder_Button.Location = new System.Drawing.Point(695, 241);
+            this.NewFolder_Button.Location = new System.Drawing.Point(729, 241);
             this.NewFolder_Button.Name = "NewFolder_Button";
             this.NewFolder_Button.Size = new System.Drawing.Size(61, 23);
             this.NewFolder_Button.TabIndex = 25;
@@ -302,11 +312,102 @@
             this.NewFolder_Button.UseVisualStyleBackColor = true;
             this.NewFolder_Button.Click += new System.EventHandler(this.NewFolder_Button_Click);
             // 
+            // LogFilesGridView
+            // 
+            this.LogFilesGridView.AllowUserToAddRows = false;
+            this.LogFilesGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.LogFilesGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.LogFile_Name});
+            this.LogFilesGridView.Location = new System.Drawing.Point(12, 377);
+            this.LogFilesGridView.Name = "LogFilesGridView";
+            this.LogFilesGridView.RowHeadersVisible = false;
+            this.LogFilesGridView.RowTemplate.Height = 23;
+            this.LogFilesGridView.Size = new System.Drawing.Size(257, 183);
+            this.LogFilesGridView.TabIndex = 26;
+            this.LogFilesGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.LogFilesGridView_CellClick);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(12, 362);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(81, 12);
+            this.label6.TabIndex = 27;
+            this.label6.Text = "서버 로그조회";
+            // 
+            // Log_Content_Box
+            // 
+            this.Log_Content_Box.Location = new System.Drawing.Point(275, 377);
+            this.Log_Content_Box.Name = "Log_Content_Box";
+            this.Log_Content_Box.Size = new System.Drawing.Size(556, 183);
+            this.Log_Content_Box.TabIndex = 28;
+            this.Log_Content_Box.Text = "";
+            // 
+            // label8
+            // 
+            this.label8.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label8.Location = new System.Drawing.Point(12, 343);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(888, 2);
+            this.label8.TabIndex = 29;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(273, 362);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(125, 12);
+            this.label9.TabIndex = 30;
+            this.label9.Text = "현재 조회 중인 로그 : ";
+            // 
+            // OpenLogFileButton
+            // 
+            this.OpenLogFileButton.Location = new System.Drawing.Point(841, 507);
+            this.OpenLogFileButton.Name = "OpenLogFileButton";
+            this.OpenLogFileButton.Size = new System.Drawing.Size(61, 23);
+            this.OpenLogFileButton.TabIndex = 31;
+            this.OpenLogFileButton.Text = "파일열기";
+            this.OpenLogFileButton.UseVisualStyleBackColor = true;
+            this.OpenLogFileButton.Click += new System.EventHandler(this.OpenLogFileButton_Click);
+            // 
+            // ReFresh_Log
+            // 
+            this.ReFresh_Log.Location = new System.Drawing.Point(841, 536);
+            this.ReFresh_Log.Name = "ReFresh_Log";
+            this.ReFresh_Log.Size = new System.Drawing.Size(61, 23);
+            this.ReFresh_Log.TabIndex = 32;
+            this.ReFresh_Log.Text = "새로고침";
+            this.ReFresh_Log.UseVisualStyleBackColor = true;
+            this.ReFresh_Log.Click += new System.EventHandler(this.ReFresh_Log_Click);
+            // 
+            // LogFile_Name
+            // 
+            this.LogFile_Name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.LogFile_Name.HeaderText = "사용자ip";
+            this.LogFile_Name.Name = "LogFile_Name";
+            // 
+            // Log_Name_Label
+            // 
+            this.Log_Name_Label.AutoSize = true;
+            this.Log_Name_Label.Location = new System.Drawing.Point(392, 362);
+            this.Log_Name_Label.Name = "Log_Name_Label";
+            this.Log_Name_Label.Size = new System.Drawing.Size(53, 12);
+            this.Log_Name_Label.TabIndex = 33;
+            this.Log_Name_Label.Text = "조회안함";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(882, 346);
+            this.ClientSize = new System.Drawing.Size(914, 572);
+            this.Controls.Add(this.Log_Name_Label);
+            this.Controls.Add(this.ReFresh_Log);
+            this.Controls.Add(this.OpenLogFileButton);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.Log_Content_Box);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.LogFilesGridView);
             this.Controls.Add(this.NewFolder_Button);
             this.Controls.Add(this.Back_Dir);
             this.Controls.Add(this.label7);
@@ -336,6 +437,7 @@
             this.Text = "FTP 관리자 접속기";
             this.Load += new System.EventHandler(this.Form_Load);
             ((System.ComponentModel.ISupportInitialize)(this.File_InFo_GridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LogFilesGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -372,6 +474,15 @@
         private System.Windows.Forms.Button Back_Dir;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button NewFolder_Button;
+        private System.Windows.Forms.DataGridView LogFilesGridView;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.RichTextBox Log_Content_Box;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button OpenLogFileButton;
+        private System.Windows.Forms.Button ReFresh_Log;
+        private System.Windows.Forms.DataGridViewTextBoxColumn LogFile_Name;
+        private System.Windows.Forms.Label Log_Name_Label;
     }
 }
 

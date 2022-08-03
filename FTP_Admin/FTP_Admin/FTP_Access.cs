@@ -93,29 +93,35 @@ namespace FTP_FTP_Admin
 
         //지정한 경로에 해당하는 파일정보 리스트들을 불러오는 함수
         public List<string[]> get_File_List(string PATH) {
-            string URL = string.Format("FTP://{0}:{1}{2}", this.IP, this.port, PATH);
-
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(URL);
-            request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);
-            request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
-
-            //응답을 받아온다.
-            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-
-            //받은 응답에서 스트림을 가져와 읽는다.
-            StreamReader reader = new StreamReader(response.GetResponseStream());
-            string[] raw_fileInfo = reader.ReadToEnd().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-
             List<string[]> file_list = new List<string[]>();//반환할 파일정보 리스트.
-
-            foreach (string file in raw_fileInfo)
+            try
             {
-                //fileDetailes = {날짜, 용량(폴더라면 <DIR>), 파일이름}
-                string date = file.Substring(0, 17);
-                string Capacity = file.Substring(17, 21).Trim();
-                string name = file.Substring(39);
-                string[] fileDetailes = { date, Capacity, name };
-                file_list.Add(fileDetailes);
+                string URL = string.Format("FTP://{0}:{1}{2}", this.IP, this.port, PATH);
+
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(URL);
+                request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);
+                request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
+
+                //응답을 받아온다.
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+                //받은 응답에서 스트림을 가져와 읽는다.
+                StreamReader reader = new StreamReader(response.GetResponseStream());
+                string[] raw_fileInfo = reader.ReadToEnd().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+                
+
+                foreach (string file in raw_fileInfo)
+                {
+                    //fileDetailes = {날짜, 용량(폴더라면 <DIR>), 파일이름}
+                    string date = file.Substring(0, 17);
+                    string Capacity = file.Substring(17, 21).Trim();
+                    string name = file.Substring(39);
+                    string[] fileDetailes = { date, Capacity, name };
+                    file_list.Add(fileDetailes);
+                }
+            }
+            catch (Exception ex) {
             }
 
             return file_list;
@@ -167,6 +173,9 @@ namespace FTP_FTP_Admin
                 FullSize = 0;
                 WorkedSize = 0;
 
+                if (!is_logging)
+                    await Logging(2, URL);
+
                 return true;
             }
             catch (Exception ex)//에러처리
@@ -208,7 +217,6 @@ namespace FTP_FTP_Admin
 
 
                 FullSize = (int)sourceFileStream.Length / bufflength;
-                WorkedSize = 0;
                 int cnt = 0;
                 while (true)
                 {
@@ -217,7 +225,6 @@ namespace FTP_FTP_Admin
                     if (byteCount == 0 || cnt >150000)
                         break;
                     TargetWriteStream.Write(buff, 0, byteCount);
-                    WorkedSize++;
                     cnt++;
                 }
                 TargetWriteStream.Close();
@@ -230,8 +237,8 @@ namespace FTP_FTP_Admin
                     buff = null;
                 }
 
-                FullSize = 0;
-                WorkedSize = 0;
+                if (!is_logging)
+                    await Logging(3, FTP_URL);
             }
             catch (Exception ex)
             {
@@ -327,13 +334,7 @@ namespace FTP_FTP_Admin
 
         private async Task<bool> Logging(int Logging_Mode, string F_Path)
         {//로그를 남기는 함수. Logging_Mode 1 : Connect, 2 : DownLoad, 3 : UpLoad, 4 : Delete.
-            //서버에 남길 기록을 위한 내 ip주소 가져오기
-            externalip = new WebClient().DownloadString("http://ipinfo.io/ip").Trim();//정보를 가져온 뒤에 양옆에 쓰잘데기없는 문구들을 자른다.
-            if (String.IsNullOrWhiteSpace(externalip))
-            {
-                externalip = GetInternalIPAddress();//null경우 Get Internal IP를 가져오게 한다.   
-            }
-
+           
             //가져온 내 ip주소로 서버에 로그 남기기
             List<string[]> Log_List = get_File_List("/LOG_FOLDER/");
 
@@ -345,7 +346,7 @@ namespace FTP_FTP_Admin
             foreach (string[] Log in Log_List)
             {
 
-                if (Log[2].Contains(externalip))//로그파일을 찾으면 해당파일을 다운로드 받은 뒤 수정하고, 다시 업로드한다. 로컬에 남아있는 로그파일은 삭제한다.
+                if (Log[2].Contains("Admin"))//로그파일을 찾으면 해당파일을 다운로드 받은 뒤 수정하고, 다시 업로드한다. 로컬에 남아있는 로그파일은 삭제한다.
                 {
                     check_Found = true;
 
