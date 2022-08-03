@@ -188,6 +188,8 @@ namespace FTP_FTP_Admin
                     //현재경로 수정하기
                     Current_Path.Text = "/";
 
+                    //현재폴더 용량 수정하기
+                    Folder_Capacity.Text = Convert_Byte_To_String(string.Format(FTP.get_Total_Size("/")+""));
                     Directory_History = new Stack<string>();//폴더기록도 가져오기.
 
                     Update_DataGridView();
@@ -250,6 +252,9 @@ namespace FTP_FTP_Admin
                     File_InFo_GridView.Rows.Clear();
                     //현재경로 수정하기
                     Current_Path.Text = string.Format("{0}{1}/",Current_Path.Text, FileName);
+
+                    //현재 폴더 총 용량 출력하기
+                    Folder_Capacity.Text = Convert_Byte_To_String(string.Format(FTP.get_Total_Size(Current_Path.Text) + ""));
 
                     //지금까지 온 폴더들 스택에 FileName추가하기
                     Directory_History.Push(FileName);
@@ -371,7 +376,10 @@ namespace FTP_FTP_Admin
                 string Current_Folder = Directory_History.Pop();
 
                 //현재경로 수정하기
-                Current_Path.Text = Current_Path.Text.Substring(0, Current_Path.Text.Length - (Current_Folder.Length+1));
+                Current_Path.Text = Current_Path.Text.Substring(0, Current_Path.Text.Length - (Current_Folder.Length + 1));
+
+                //현재 폴더 총 용량 출력하기
+                Folder_Capacity.Text = Convert_Byte_To_String(string.Format(FTP.get_Total_Size(Current_Path.Text) + ""));
 
                 Update_DataGridView();
             }

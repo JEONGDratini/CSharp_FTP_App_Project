@@ -66,6 +66,8 @@
             this.ReFresh_Log = new System.Windows.Forms.Button();
             this.LogFile_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Log_Name_Label = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.Folder_Capacity = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.File_InFo_GridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LogFilesGridView)).BeginInit();
             this.SuspendLayout();
@@ -395,11 +397,31 @@
             this.Log_Name_Label.TabIndex = 33;
             this.Log_Name_Label.Text = "조회안함";
             // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(727, 16);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(97, 12);
+            this.label10.TabIndex = 34;
+            this.label10.Text = "현재 폴더 용량 : ";
+            // 
+            // Folder_Capacity
+            // 
+            this.Folder_Capacity.AutoSize = true;
+            this.Folder_Capacity.Location = new System.Drawing.Point(820, 16);
+            this.Folder_Capacity.Name = "Folder_Capacity";
+            this.Folder_Capacity.Size = new System.Drawing.Size(11, 12);
+            this.Folder_Capacity.TabIndex = 35;
+            this.Folder_Capacity.Text = "0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(914, 572);
+            this.Controls.Add(this.Folder_Capacity);
+            this.Controls.Add(this.label10);
             this.Controls.Add(this.Log_Name_Label);
             this.Controls.Add(this.ReFresh_Log);
             this.Controls.Add(this.OpenLogFileButton);
@@ -483,6 +505,8 @@
         private System.Windows.Forms.Button ReFresh_Log;
         private System.Windows.Forms.DataGridViewTextBoxColumn LogFile_Name;
         private System.Windows.Forms.Label Log_Name_Label;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label Folder_Capacity;
     }
 }
 
