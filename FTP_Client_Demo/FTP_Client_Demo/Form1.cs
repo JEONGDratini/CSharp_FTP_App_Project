@@ -19,7 +19,7 @@ namespace FTP_Client_Demo
         private FTP_Access FTP = null;//따로만든 FTP접속 클래스 객체 받아올 변수
         private AES_En_DeCryption Cryptor = new AES_En_DeCryption();
 
-
+        private long MAX_Capacity = 21474836480; //ftp에서 저장할 수 있는 최대용량. 현재 20기가
         private int BtnColumnIndex;//버튼 컬럼 인덱스
 
         private Thread th_Load;//파일 다운로드, 업로드를 하면서 다른 작업할 수 있도록 스레드 사용
@@ -170,6 +170,7 @@ namespace FTP_Client_Demo
                     //현재경로 수정하기
                     Current_Path.Text = "/";
 
+                    Folder_Capacity.Text = Convert_Byte_To_String(string.Format(FTP.get_Total_Size("/") + ""));
                     Directory_History = new Stack<string>();//폴더기록도 가져오기.
 
                     //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
@@ -237,6 +238,9 @@ namespace FTP_Client_Demo
                     //현재경로 수정하기
                     Current_Path.Text = string.Format("{0}{1}/",Current_Path.Text, FileName);
 
+                    //현재 폴더 총 용량 출력하기
+                    Folder_Capacity.Text = Convert_Byte_To_String(string.Format(FTP.get_Total_Size(Current_Path.Text) + ""));
+                    
                     //지금까지 온 폴더들 스택에 FileName추가하기
                     Directory_History.Push(FileName);
 
@@ -300,8 +304,14 @@ namespace FTP_Client_Demo
             if (dr == DialogResult.Yes)
             {
                 Working_State.Text = "작업 상태 : 업로드 중...";
+                
                 int FullSize = await FTP.getFullSize();
-                if (FullSize > 0)
+                if (FTP.get_Total_Size("/") > MAX_Capacity)//총 저장된 용량이 3기가보다 크면 업로드 막는다.
+                {
+                    MessageBox.Show(string.Format("클라우드 공간이 부족합니다\n" + "클라우드 최대용량 : "
+                        + Convert_Byte_To_String(string.Format(MAX_Capacity+""))), "경고");
+                }
+                else if (FullSize > 0)
                     MessageBox.Show("이미 업로더가 작동 중입니다.", "경고");
                 else
                 {
@@ -339,10 +349,11 @@ namespace FTP_Client_Demo
                     else
                         MessageBox.Show(FileName + "파일 업로드를 실패했습니다.");
 
-                    Working_State.Text = "작업 상태 : 작업안함.";
                     Is_Working = false;
                     File_InFo_GridView.Enabled = true;
                 }
+
+                Working_State.Text = "작업 상태 : 작업안함.";
             }
         }
 
@@ -370,6 +381,10 @@ namespace FTP_Client_Demo
                 //현재경로 수정하기
                 Current_Path.Text = Current_Path.Text.Substring(0, Current_Path.Text.Length - (Current_Folder.Length+1));
 
+
+                //현재 폴더 총 용량 출력하기
+                Folder_Capacity.Text = Convert_Byte_To_String(string.Format(FTP.get_Total_Size(Current_Path.Text) + ""));
+                
                 //파일 리스트 받아와서 데이터그리드 뷰에 출력시키기
                 List<string[]> File_InFo_List = FTP.get_File_List(Current_Path.Text);
 

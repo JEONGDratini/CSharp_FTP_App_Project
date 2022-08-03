@@ -57,6 +57,8 @@
             this.Back_Dir = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.NewFolder_Button = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
+            this.Folder_Capacity = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.File_InFo_GridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -302,11 +304,31 @@
             this.NewFolder_Button.UseVisualStyleBackColor = true;
             this.NewFolder_Button.Click += new System.EventHandler(this.NewFolder_Button_Click);
             // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(613, 16);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(93, 12);
+            this.label10.TabIndex = 35;
+            this.label10.Text = "현재 폴더 용량 :";
+            // 
+            // Folder_Capacity
+            // 
+            this.Folder_Capacity.AutoSize = true;
+            this.Folder_Capacity.Location = new System.Drawing.Point(712, 16);
+            this.Folder_Capacity.Name = "Folder_Capacity";
+            this.Folder_Capacity.Size = new System.Drawing.Size(11, 12);
+            this.Folder_Capacity.TabIndex = 36;
+            this.Folder_Capacity.Text = "0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 349);
+            this.Controls.Add(this.Folder_Capacity);
+            this.Controls.Add(this.label10);
             this.Controls.Add(this.NewFolder_Button);
             this.Controls.Add(this.Back_Dir);
             this.Controls.Add(this.label7);
@@ -372,6 +394,8 @@
         private System.Windows.Forms.Button Back_Dir;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button NewFolder_Button;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label Folder_Capacity;
     }
 }
 

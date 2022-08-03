@@ -432,6 +432,40 @@ namespace FTP_FTP_Admin
             throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
+        //해당 디렉토리의 크기를 알아내는 함수
+        public long get_Total_Size(string PATH)
+        {
+            long size = 0;
+            string URL = string.Format("FTP://{0}:{1}{2}", this.IP, this.port, PATH);
+
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(URL);
+            request.Credentials = new NetworkCredential(this.user_ID, this.user_PW);
+            request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
+
+            //응답을 받아온다.
+            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+            //받은 응답에서 스트림을 가져와 읽는다.
+            StreamReader reader = new StreamReader(response.GetResponseStream());
+            string[] raw_fileInfo = reader.ReadToEnd().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string file in raw_fileInfo)
+            {
+                //fileDetailes = {날짜, 용량(폴더라면 <DIR>), 파일이름}
+
+                string Capacity = file.Substring(17, 21).Trim();
+                string name = file.Substring(39);
+
+                if (Capacity.Equals("<DIR>"))//폴더면 파일 용량 연산을 안하고 바로 값을 집어넣고
+                    size = size + get_Total_Size(string.Format(PATH + name + "/"));
+                else//파일이면 파일 용량 연산을 시행하고 값을 집어넣는다.
+                    size = size + long.Parse(Capacity);
+
+            }
+
+            return size;
+        }
+
         public async Task<int> getFullSize() {
             return FullSize;
         }
