@@ -68,6 +68,7 @@
             this.Log_Name_Label = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.Folder_Capacity = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.File_InFo_GridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LogFilesGridView)).BeginInit();
             this.SuspendLayout();
@@ -415,11 +416,20 @@
             this.Folder_Capacity.TabIndex = 35;
             this.Folder_Capacity.Text = "0";
             // 
+            // label12
+            // 
+            this.label12.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label12.Location = new System.Drawing.Point(244, 16);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(2, 327);
+            this.label12.TabIndex = 37;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(914, 572);
+            this.Controls.Add(this.label12);
             this.Controls.Add(this.Folder_Capacity);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.Log_Name_Label);
@@ -507,6 +517,7 @@
         private System.Windows.Forms.Label Log_Name_Label;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label Folder_Capacity;
+        private System.Windows.Forms.Label label12;
     }
 }
 
