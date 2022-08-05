@@ -23,6 +23,7 @@ namespace FTP_FTP_Admin
         public Exception LastException = null;
 
         public bool Is_Connected {get; set;}
+
         //서버 접속에 필요한 정보들 저장하는 변수들.
         private string IP;
         private string port;
